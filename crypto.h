@@ -1,9 +1,12 @@
+#ifndef STDLIB_H
+#include <stdlib.h>
+#define STDLIB_H
+#endif
 
 /* Number of individual keys we create */
 #define KEY_COUNT 5
 #define POINT_X_MAX 100
 #include <math.h>
-
 
 /* structure for holding the coefficients of polynomial */
 typedef struct polynomial {
@@ -81,7 +84,13 @@ char *generate_key(void);
  * - A polynomial object
  *
 *******************************************************************************/
-polynomial_t create_polynomial_from_key(char *key);
+polynomial_t create_polynomial_from_key(char *key) {
+	polynomial_t line;
+	line.a = (key[0] << 24) | (key[1] << 16) | (key[2] << 8) | key[3];
+	line.b = (key[4] << 24) | (key[5] << 16) | (key[6] << 8) | key[7];
+	line.c = (key[8] << 24) | (key[9] << 16) | (key[10] << 8) | key[11];
+	return line;
+}
 
 
 /*******************************************************************************
