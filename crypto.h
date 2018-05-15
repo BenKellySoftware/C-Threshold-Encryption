@@ -3,9 +3,15 @@
 #define STDLIB_H
 #endif
 
+#ifndef MATH_H
+#include <math.h>
+#define MATH_H
+#endif
+
 /* Number of individual keys we create */
 #define KEY_COUNT 5
 #define MASTER_KEY_LEN 6
+#define POINT_X_MAX 100
 
 /* structure for holding the coefficients of polynomial */
 typedef struct polynomial {
@@ -106,7 +112,15 @@ polynomial_t create_polynomial_from_key(char *key) {
  * - a new point
  *
 *******************************************************************************/
-point_t pick_point(polynomial_t p);
+point_t pick_point(polynomial_t poly) 
+{
+	point_t point;
+
+	point.x = rand_int(POINT_X_MAX);
+	point.y = (poly.a * pow(point.x, 2)) + (poly.b * point.x) + poly.c;
+
+	return point;
+}
 
 
 /*******************************************************************************
