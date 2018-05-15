@@ -3,8 +3,14 @@
 #define STDLIB_H
 #endif
 
+#ifndef RANDOM_H
+#include "random.h"
+#define RANDOM_H
+#endif
+
 /* Number of individual keys we create */
 #define KEY_COUNT 5
+#define POINT_X_MIN -100
 #define POINT_X_MAX 100
 #include <math.h>
 
@@ -111,7 +117,7 @@ point_t pick_point(polynomial_t poly)
 {
 	point_t point;
 
-	point.x = rand_int(POINT_X_MAX);
+	point.x = rand_int(POINT_X_MIN, POINT_X_MAX);
 	point.y = (poly.a * pow(point.x, 2)) + (poly.b * point.x) + poly.c;
 
 	return point;
