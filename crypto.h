@@ -8,11 +8,16 @@
 #define RANDOM_H
 #endif
 
+#ifndef MATH_H
+#include <math.h>
+#define MATH_H
+#endif
+
 /* Number of individual keys we create */
 #define KEY_COUNT 5
 #define POINT_X_MIN -100
 #define POINT_X_MAX 100
-#include <math.h>
+#define MASTER_KEY_LEN 6
 
 /* structure for holding the coefficients of polynomial */
 typedef struct polynomial {
@@ -92,9 +97,9 @@ char *generate_key(void);
 *******************************************************************************/
 polynomial_t create_polynomial_from_key(char *key) {
 	polynomial_t line;
-	line.a = (key[0] << 24) | (key[1] << 16) | (key[2] << 8) | key[3];
-	line.b = (key[4] << 24) | (key[5] << 16) | (key[6] << 8) | key[7];
-	line.c = (key[8] << 24) | (key[9] << 16) | (key[10] << 8) | key[11];
+	line.a = (key[0] << 8) | key[1];
+	line.b = (key[2] << 8) | key[3];
+	line.c = (key[4] << 8) | key[5];
 	return line;
 }
 
@@ -156,4 +161,7 @@ polynomial_t find_polynomial(point_t a, point_t b, point_t c);
  * - Coefficients of p joined together as a key
  *
 *******************************************************************************/
-char *retrieve_key_from_polynomial(polynomial_t p);
+char *retrieve_key_from_polynomial(polynomial_t p) {
+	char *key_p = (char *)malloc(sizeof(char) * MASTER_KEY_LEN);
+	return key_p;
+}
