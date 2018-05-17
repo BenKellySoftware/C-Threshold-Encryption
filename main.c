@@ -10,6 +10,7 @@
 
 #include "crypto.h"
 #include "compression.h"
+#include "colour.h"
 
 /*******************************************************************************
  * Asks for three keys, and runs the steps to decrypt and decompress
