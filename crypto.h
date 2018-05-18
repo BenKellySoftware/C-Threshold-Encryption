@@ -27,7 +27,7 @@ typedef struct polynomial {
 
 /* structure for a point on a polynomial */
 typedef struct point {
-	float x, y;
+	int x, y;
 } point_t;
 
 
@@ -145,7 +145,20 @@ point_t pick_point(polynomial_t poly)
  * - A polynomial that all three points lay on
  *
 *******************************************************************************/
-polynomial_t find_polynomial(point_t a, point_t b, point_t c);
+polynomial_t find_polynomial(point_t p1, point_t p2, point_t p3) {
+	polynomial_t poly;
+
+	poly.a = p1.y/((p1.x-p2.x)*(p1.x-p3.x)) + p2.y/((p2.x-p1.x)*(p2.x-p3.x)) + p3.y/((p3.x-p1.x)*(p3.x-p2.x));
+	poly.b = -p1.y*(p2.x+p3.x)/((p1.x-p2.x)*(p1.x-p3.x))
+			 -p2.y*(p1.x+p3.x)/((p2.x-p1.x)*(p2.x-p3.x))
+			 -p3.y*(p1.x+p2.x)/((p3.x-p1.x)*(p3.x-p2.x));
+
+	poly.c = p1.y*p2.x*p3.x/((p1.x-p2.x)*(p1.x-p3.x))
+		   + p2.y*p1.x*p3.x/((p2.x-p1.x)*(p2.x-p3.x))
+		   + p3.y*p1.x*p2.x/((p3.x-p1.x)*(p3.x-p2.x));
+	
+	return poly;
+}
 
 
 /*******************************************************************************
