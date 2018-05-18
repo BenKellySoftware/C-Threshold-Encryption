@@ -1,4 +1,10 @@
 
+#ifndef STDIO_H
+#include <stdio.h>
+#define STDIO_H
+#endif
+
+
 typedef struct bit_buffer {
 	int seek;
 	int bit[8];
@@ -8,6 +14,9 @@ typedef struct bit_buffer {
 /*******************************************************************************
  * Creates a new buffer from a character
  * 
+ * Author:
+ * - Tom
+ *
  * Inputs:
  * - c : The character to make into a buffer
  *
@@ -34,6 +43,9 @@ bit_buffer_t char_to_buffer(char c)
 
 /*******************************************************************************
  * Displays a buffer in its entirety
+ *
+ * Author:
+ * - Tom
  *
  * Inputs:
  * - b : The buffer to display

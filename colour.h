@@ -1,11 +1,12 @@
+
 #ifndef STDIO_H
-	#define STDIO_H value
-	#include <stdio.h>
+#define STDIO_H value
+#include <stdio.h>
 #endif
 
 #ifndef STRING_H
-	#define STRING_H value
-	#include <string.h>
+#define STRING_H value
+#include <string.h>
 #endif
 
 /* ansi codes for terminal colour */
@@ -21,6 +22,9 @@
 
 /*******************************************************************************
  * Prints text in a colour
+ *
+ * Author:
+ * - Tom
  *
  * Inputs:
  * - colour  : Colour to print things in
