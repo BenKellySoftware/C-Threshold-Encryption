@@ -8,21 +8,27 @@
 #define RANDOM_H
 #endif
 
-
 #ifndef COLOUR_H
 #include "colour.h"
 #define COLOUR_H
 #endif
 
+#ifndef COMPRESSION_H
+#include "compression.h"
+#define COMPRESSION_H
+#endif
+
 
 void test_random(void);
 void test_colour(void);
+void test_bit_buffer(void);
 
 
 int main(void)
 {
-	test_random();
-	test_colour();
+	/*test_random();*/
+	/*test_colour();*/
+	test_bit_buffer();
 
 	return 0;
 }
@@ -62,4 +68,17 @@ void test_colour(void)
 	colour_printf("white", " and this is white\n");
 
 	printf("\n");
+}
+
+
+void test_bit_buffer(void)
+{
+	printf("Running test_bit_buffer\n");
+
+	char c = 'Q';
+	printf("Char is %c\n", c);
+
+	bit_buffer_t b = char_to_buffer(c);
+
+	display_buffer(b);
 }
