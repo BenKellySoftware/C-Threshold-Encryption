@@ -89,6 +89,11 @@ void test_bit_buffer_creation(void)
 
 	display_buffer(b);
 
+	char val = buffer_to_char(b);
+	printf("Reading the buffer back, we get %c\n", val);
+	bit_buffer_t b2 = char_to_buffer(val);
+	display_buffer(b2);
+
 	printf("\n");
 }
 

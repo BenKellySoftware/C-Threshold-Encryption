@@ -42,6 +42,33 @@ bit_buffer_t char_to_buffer(char c)
 
 
 /*******************************************************************************
+ * Gets a char from a buffer
+ *
+ * Author:
+ * - Tom
+ *
+ * Inputs:
+ * - b : The bit buffer
+ *
+ * Outputs:
+ * - A character that represents the bits
+ *
+*******************************************************************************/
+int buffer_to_char(bit_buffer_t b)
+{
+	char val;
+
+	int i;
+	for (i = 0; i < 8; i++)
+	{
+		val += b.bit[i] << (7-i);
+	}
+
+	return val;
+}
+
+
+/*******************************************************************************
  * Displays a buffer in its entirety
  *
  * Author:
@@ -107,6 +134,18 @@ int get_next_bit(bit_buffer_t *b)
  ******************************************************************************/
 int compress_file(char *filename)
 {
+	/* open the file */
+
+	/* read the file char by char*/
+
+	/* for each character, look up what the compressed bit string is */
+
+	/* loop through the bits in the bit string and turn it into new chars */
+
+	/* write those chars to file */
+
+	/* close the file */
+
 	return 0;
 }
 
@@ -126,5 +165,15 @@ int compress_file(char *filename)
  ******************************************************************************/
 int decompress_file(char *filename)
 {
+	/* open the file */
+
+	/* read characters as individual bits */
+
+	/* find the strings of bits that correlate to a character */
+
+	/* write that character to the file */
+
+	/* close the file */
+	
 	return 0;
 }
