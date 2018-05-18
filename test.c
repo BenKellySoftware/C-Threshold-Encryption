@@ -1,5 +1,4 @@
 
-
 /* NOTE : This file is for writing tests to check if functionality works.
    DO NOT SUBMIT THIS FILE */
 
@@ -28,14 +27,18 @@ void test_random(void);
 void test_colour(void);
 void test_bit_buffer_creation(void);
 void test_bit_buffer_reading(void);
+void test_compress_char(void);
+void test_compression(void);
 
 
 int main(void)
 {
 	/*test_random();*/
 	/*test_colour();*/
-	test_bit_buffer_creation();
-	test_bit_buffer_reading();
+	/*test_bit_buffer_creation();*/
+	/*test_bit_buffer_reading();*/
+	/*test_compress_char();*/
+	test_compression();
 
 	return 0;
 }
@@ -114,6 +117,44 @@ void test_bit_buffer_reading(void)
 
 		printf("%d\n", bit);
 	}
+
+	printf("\n");
+}
+
+
+void test_compress_char(void)
+{
+	printf("Running test_compress_char\n");
+
+	unsigned char file_text[7] = {0x20, 0xff, 0x00, 0xde, 0xad, 0xbe, 0xef};
+
+	int i;
+	for (i = 0; i < 7; ++i)
+	{
+		char *s = "";
+		printf("  Character compressing is %i\n", file_text[i]);
+
+		int success = char_to_bits(file_text[i], &s);
+
+		printf("  Compressed is %s\n", s);
+		printf("  Was %sa success\n", success ? "not " : "");
+
+		printf("\n");
+	}
+
+	printf("\n");
+}
+
+
+void test_compression(void)
+{
+	printf("Running test_compression\n");
+
+	char *target_file = "compress_this_file.txt";
+	char *destination_file = "compress_this_file.compressed";
+
+	int success = compress_file(target_file, destination_file);
+	printf("Was %sa success\n", success ? "not " : "");
 
 	printf("\n");
 }

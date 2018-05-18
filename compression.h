@@ -4,6 +4,11 @@
 #define STDIO_H
 #endif
 
+#ifndef HUFFMAN_H
+#include "huffman.h"
+#define HUFFMAN_H
+#endif
+
 
 typedef struct bit_buffer {
 	int seek;
@@ -126,25 +131,47 @@ int get_next_bit(bit_buffer_t *b)
  * - Tom
  *
  * Inputs:
- * - filename : The file to compress
+ * - target_file      : The file to compress
+ * - destination_file : The file to write to
  *
  * Output:
  * - 0 if successful, otherwise 1
  *
  ******************************************************************************/
-int compress_file(char *filename)
+int compress_file(char *target_file, char *destination_file)
 {
 	/* open the file */
+	FILE *target_p = fopen(target_file, "rb");
+    if (target_p == NULL)
+    {
+        fprintf(stderr, "Error opening target file\n");
+        exit(1);
+    }
+    FILE *destination_p = fopen(destination_file, "wb");
+    if (destination_p == NULL)
+    {
+        fprintf(stderr, "Error opening destination file\n");
+        exit(2);
+    }
 
 	/* read the file char by char*/
+	char c;
+	while ((c = getc(target_p)) != EOF)
+	{
+		printf("Writing \n");
+        printf("%c\n", c);
+	}
 
 	/* for each character, look up what the compressed bit string is */
+	/*int success = char_to_bits(file_text[i], &s);*/
 
 	/* loop through the bits in the bit string and turn it into new chars */
 
 	/* write those chars to file */
 
-	/* close the file */
+	/* close the files */
+	fclose(target_p);
+	fclose(destination_p);
 
 	return 0;
 }
@@ -157,23 +184,40 @@ int compress_file(char *filename)
  * - Tom
  *
  * Inputs:
- * - filename : The file to decompress
+ * - target_file      : The file to decompress
+ * - destination_file : The file to write to
  *
  * Output:
  * - 0 if successful, otherwise 1
  *
  ******************************************************************************/
-int decompress_file(char *filename)
+int decompress_file(char *target_file, char *destination_file)
 {
-	/* open the file */
+	/* open the files */
+	FILE *target_p = fopen(target_file, "rb");
+    if (target_p == NULL)
+    {
+        fprintf(stderr, "Error opening target file\n");
+        exit(1);
+    }
+    FILE *destination_p = fopen(destination_file, "wb");
+    if (destination_p == NULL)
+    {
+        fprintf(stderr, "Error opening destination file\n");
+        exit(2);
+    }
+    
 
 	/* read characters as individual bits */
+
 
 	/* find the strings of bits that correlate to a character */
 
 	/* write that character to the file */
 
-	/* close the file */
+	/* close the files */
+	fclose(target_p);
+	fclose(destination_p);
 	
 	return 0;
 }
