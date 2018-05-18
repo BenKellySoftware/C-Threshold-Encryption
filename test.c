@@ -1,4 +1,8 @@
 
+
+/* NOTE : This file is for writing tests to check if functionality works.
+   DO NOT SUBMIT THIS FILE */
+
 #ifndef STDIO_H
 #include <stdio.h>
 #define STDIO_H
@@ -19,17 +23,19 @@
 #define COMPRESSION_H
 #endif
 
-
+/* prototypes */
 void test_random(void);
 void test_colour(void);
-void test_bit_buffer(void);
+void test_bit_buffer_creation(void);
+void test_bit_buffer_reading(void);
 
 
 int main(void)
 {
 	/*test_random();*/
 	/*test_colour();*/
-	test_bit_buffer();
+	test_bit_buffer_creation();
+	test_bit_buffer_reading();
 
 	return 0;
 }
@@ -72,9 +78,9 @@ void test_colour(void)
 }
 
 
-void test_bit_buffer(void)
+void test_bit_buffer_creation(void)
 {
-	printf("Running test_bit_buffer\n");
+	printf("Running test_bit_buffer_creation\n");
 
 	char c = 'Q';
 	printf("Char is %c\n", c);
@@ -82,4 +88,27 @@ void test_bit_buffer(void)
 	bit_buffer_t b = char_to_buffer(c);
 
 	display_buffer(b);
+
+	printf("\n");
+}
+
+
+void test_bit_buffer_reading(void)
+{
+	printf("Running test_bit_buffer_reading\n");
+
+	bit_buffer_t b = char_to_buffer('T');
+	display_buffer(b);
+
+	int bit;
+
+	int i;
+	for (i = 0; i < 9; ++i)
+	{
+		bit = get_next_bit(&b);
+
+		printf("%d\n", bit);
+	}
+
+	printf("\n");
 }

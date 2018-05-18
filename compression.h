@@ -69,6 +69,30 @@ void display_buffer(bit_buffer_t b)
 
 
 /*******************************************************************************
+ * Gets the next bit in a bit buffer. If we have run out of bits, returns -1.
+ *
+ * Author:
+ * - Tom
+ *
+ * Inputs:
+ * - b : Bit buffer to read from
+ *
+ * Outputs:
+ * - 0 or 1 depending on the bit. If out of bits, returns -1
+ *
+*******************************************************************************/
+int get_next_bit(bit_buffer_t *b)
+{
+	if (b->seek == 8)
+	{
+		return -1;
+	}
+
+	return b->bit[b->seek++];
+}
+
+
+/*******************************************************************************
  * Compresses a file such that it takes up less space on disc
  *
  * Author: 
