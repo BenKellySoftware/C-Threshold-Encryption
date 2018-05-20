@@ -49,22 +49,41 @@ typedef struct point {
 * - key : Key used to encrypt file (given as a pointer)
 *
 *******************************************************************************/
-int encrypt_file(char* filename, char* key_concat) {
+int encrypt_file(char* filename, char* key) {
 	int error = 0; /*boolean for error. if 0, all good. if 1, we have problems*/
-	char * key_rand = generate_key(); /*this is the random key (which will be used in XOR process)*/
-	long * data_size = (long*) malloc(1*sizeof(long));
-	error = find_file_size(filename, data_size);
+
+	char * key_rand = generate_key(); /*this is the random key, which is the first half of the full key*/
+	/*we must make  decimal version of this, you'll see why in a minute*/
+	long key_rand_no = (int)key_rand[0] + (pow(10,3) * (int) key_rand[1]) + (pow(10,6) * (int) key_rand[2]);
+	key_rand_no = key_rand_no + (pow(10, 9) * (int)key_rand[3] + pow(10, 12) * (int)key_rand[4] + pow(10, 12) * (int)key_rand[5]);
+
+	long * data_size = (long*) malloc(1*sizeof(long)); /*alliocate space for aa variable, wich will contain the data size*/
+
+	error = find_file_size(filename, data_size); /*find file size of clean data file. we must do this first, before reading it*/
 	if (error == 0) {
-		char * data_clean = (char*) malloc(1*sizeof(char));
+		char * data_clean = (char*) malloc((*data_size) * sizeof(char)); /*alliocate space for the CLEAN (unencrypted) data*/
 		if (read_file(filename, data_clean, data_size) == 1) {/*if something wrong happened whilst reading file*/
 			error = 1;
 		}
 		else {
 			/*TODO: ENCRYPTION STUFF HERE*/
+			char* data_encrypted = (char*) malloc((*data_size) * sizeof(char)); /*alliocate space for the ENCRYPTED data*/
 
+			for (int i = 0; i < *data_size; i++) {
+				data_encrypted[i] = (char) algorithmn_encrypt((double) data_clean[i], key_rand_no);
+			}
 
+			if (error == 0) {/*if we have no errors so far, we know it is safe to return the data*/
+				*key = key_rand;/*store the key*/
+				write_file(filename, data_encrypted, *data_size);/*STORE ENCRYPTED DATA TO FILE*/
+			}
+
+			free(data_encrypted);
 		}/*if|read_file*/
+		free(data_clean);
 	}/*if|error*/
+	free(data_size);
+	free(key_rand);
 
 	return error;
 };
@@ -93,7 +112,23 @@ int decrypt_file(char* filename, char* key_concat) {
 };
 
 
+/*//////////////////////////////////////////////////////////////////////////////
+// Simple equations to manipulate data in order to encrypt.
+//
+// The specific mathematical equation being used here is definetely up
+// for debate.
+//
+// Author:
+// - Jack
+//
+//////////////////////////////////////////////////////////////////////////////*/
+double algorithmn_encrypt(double input, double key) {/*input key and clean data, output encrypted data*/
+	return pow(input, key);
+};
 
+double algorithmn_decrypt(double input, double key) {/*input key and encrypted data, output clean data*/
+	return pow(input, (1/key));
+};
 
 
 /*******************************************************************************
@@ -114,6 +149,9 @@ char * generate_key() {
 	key[0] = (char) rand_int(1,255);
 	key[1] = (char) rand_int(1, 255);
 	key[2] = (char) rand_int(1, 255);
+	key[3] = (char)rand_int(1, 255);
+	key[4] = (char)rand_int(1, 255);
+	key[5] = (char)rand_int(1, 255);
 	return key;
 };
 
@@ -131,18 +169,18 @@ char * generate_key() {
 // - 0 if successful, otherwise 1
 //
 //////////////////////////////////////////////////////////////////////////////*/
-int write_file(char* filename, char* data) {
+int write_file(char* filename, char* data, long* filesize) {
 	FILE* file;
 	file = fopen(filename, "w");
 	if (file != NULL) {
-		/*write to file*/
+		/*TODO: write to file*/
 
 	}
 	if (fclose(filename) == 1) {
 		return 1;
 	}
 	return 0;
-}
+};
 
 /*//////////////////////////////////////////////////////////////////////////////
 // Reads from a file (wether it be encrypted or decrypted)
@@ -191,7 +229,7 @@ int read_file(char* filename, char* data, long* filesize) {
 	}
 
 	return error;
-}
+};
 
 /*//////////////////////////////////////////////////////////////////////////////
 // Finds the size of a file (doesn't look at data at all)
@@ -227,7 +265,7 @@ int find_file_size(char* filename, long* filesize) {
 	}
 
 	return error;
-}
+};
 
 
 /*******************************************************************************
