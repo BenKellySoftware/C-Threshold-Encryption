@@ -57,7 +57,7 @@ int encrypt_file(char* filename, char* key) {
 	long key_rand_no = (int)key_rand[0] + (pow(10,3) * (int) key_rand[1]) + (pow(10,6) * (int) key_rand[2]);
 	key_rand_no = key_rand_no + (pow(10, 9) * (int)key_rand[3] + pow(10, 12) * (int)key_rand[4] + pow(10, 12) * (int)key_rand[5]);
 
-	long * data_size = (long*) malloc(1*sizeof(long)); /*alliocate space for aa variable, wich will contain the data size*/
+	long * data_size = (long*) malloc(1*sizeof(long)); /*alliocate space for a variable, wich will contain the data size*/
 
 	error = find_file_size(filename, data_size); /*find file size of clean data file. we must do this first, before reading it*/
 	if (error == 0) {
@@ -66,7 +66,7 @@ int encrypt_file(char* filename, char* key) {
 			error = 1;
 		}
 		else {
-			/*TODO: ENCRYPTION STUFF HERE*/
+			/*ENCRYPTION STUFF HERE*/
 			char* data_encrypted = (char*) malloc((*data_size) * sizeof(char)); /*alliocate space for the ENCRYPTED data*/
 
 			for (int i = 0; i < *data_size; i++) {
@@ -74,7 +74,7 @@ int encrypt_file(char* filename, char* key) {
 			}
 
 			if (error == 0) {/*if we have no errors so far, we know it is safe to return the data*/
-				*key = key_rand;/*store the key*/
+				*key = key_rand;/*give back the key*/
 				write_file(filename, data_encrypted, *data_size);/*STORE ENCRYPTED DATA TO FILE*/
 			}
 
@@ -104,9 +104,38 @@ int encrypt_file(char* filename, char* key) {
 * - 0 if successful, otherwise 1
 *
 *******************************************************************************/
-int decrypt_file(char* filename, char* key_concat) {
+int decrypt_file(char* filename, char* key) {
 	int error = 0; /*boolean for error. if 0, all good. if 1, we have problems*/
 
+									  /*we must make  decimal version of the key, you'll see why in a minute*/
+	long key_no = (int)key[0] + (pow(10, 3) * (int)key[1]) + (pow(10, 6) * (int)key[2]);
+	key_no = key_no + (pow(10, 9) * (int)key[3] + pow(10, 12) * (int)key[4] + pow(10, 12) * (int)key[5]);
+
+	long * data_size = (long*)malloc(1 * sizeof(long)); /*alliocate space for a variable, wich will contain the data size*/
+
+	error = find_file_size(filename, data_size); /*find file size of encrypted data file. we must do this first, before reading it*/
+	if (error == 0) {
+		char * data_encrypted = (char*)malloc((*data_size) * sizeof(char)); /*alliocate space for the encrypted data*/
+		if (read_file(filename, data_encrypted, data_size) == 1) {/*if something wrong happened whilst reading file*/
+			error = 1;
+		}
+		else {
+			/*DECRYPTION STUFF HERE*/
+			char* data_clean = (char*)malloc((*data_size) * sizeof(char)); /*alliocate space for the unenccrypted (clean) data*/
+
+			for (int i = 0; i < *data_size; i++) {
+				data_clean[i] = (char)algorithmn_decrypt((double)data_encrypted[i], key_no);
+			}
+
+			if (error == 0) {/*if we have no errors so far, we know it is safe to return the data*/
+				write_file(filename, data_clean, *data_size);/*STORE DECRYPTED DATA TO FILE*/
+			}
+
+			free(data_clean);
+		}/*if|read_file*/
+		free(data_encrypted);
+	}/*if|error*/
+	free(data_size);
 
 	return error;
 };
@@ -170,16 +199,32 @@ char * generate_key() {
 //
 //////////////////////////////////////////////////////////////////////////////*/
 int write_file(char* filename, char* data, long* filesize) {
+	int error = 0; /*boolean for error. if 0, all good. if 1, we have problems*/
 	FILE* file;
 	file = fopen(filename, "w");
-	if (file != NULL) {
-		/*TODO: write to file*/
 
+	if (file != NULL) {
+		/*write to file*/
+
+		/*used if we want to find the file size. here it is already given*/
+		/*
+		fseek(file, 0, SEEK_END);
+		*filesize = ftell(file);
+		rewind(file);
+		*/
+
+		long fread_result = fwrite(data, 1, *filesize, file);
+		if (fread_result != *filesize) {
+			error = 1;
+		}
+	}
+	else {
+		error = 1;
 	}
 	if (fclose(filename) == 1) {
-		return 1;
+		error = 1;
 	}
-	return 0;
+	return error;
 };
 
 /*//////////////////////////////////////////////////////////////////////////////
