@@ -799,7 +799,6 @@ int char_to_bits(unsigned int c, char **s)
 		default:
 			return 1;
 	}
-
 }
 
 

@@ -1,2 +1,4 @@
 *.out
 *.compressed
+*.bin
+*.hex

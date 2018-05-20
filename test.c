@@ -151,10 +151,10 @@ void test_compression(void)
 	printf("Running test_compression\n");
 
 	char *target_file = "compress_this_file.txt";
-	char *destination_file = "compress_this_file.compressed";
+	char *destination_file = "compress_this_file.bin";
 
 	int success = compress_file(target_file, destination_file);
-	printf("Was %sa success\n", success ? "not " : "");
+	printf("\nWas %sa success\n", success ? "not " : "");
 
 	printf("\n");
 }
