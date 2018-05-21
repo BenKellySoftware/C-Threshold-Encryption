@@ -155,8 +155,8 @@ void test_compression(void)
 {
 	printf("Running test_compression\n");
 
-	char *target_file = "compress_this_file.txt";
-	char *destination_file = "compress_this_file.bin";
+	char *target_file = "Test/compress_this_file.txt";
+	char *destination_file = "Test/compress_this_file.bin";
 
 	int success = compress_file(target_file, destination_file);
 	printf("Was %sa success\n", success ? "not " : "");
@@ -169,8 +169,8 @@ void test_decompression(void)
 {
 	printf("Running test_decompression\n");
 
-	char *target_file = "compress_this_file.bin";
-	char *destination_file = "decompress_this_file.txt";
+	char *target_file = "Test/compress_this_file.bin";
+	char *destination_file = "Test/decompress_this_file.txt";
 
 	int success = decompress_file(target_file, destination_file);
 	printf("Was %sa success\n", success ? "not " : "");
@@ -182,7 +182,7 @@ void test_decompression(void)
 void test_compressed_file(void)
 {
 	printf("Running test_compressed_file\n");
-	char *filename = "compress_this_file.bin";
+	char *filename = "Test/compress_this_file.bin";
 
 	FILE *fp = fopen(filename, "r");
 	if (fp == NULL)
@@ -210,9 +210,9 @@ void test_full_compress(void)
 {
 	printf("Running full_test_compression\n");
 
-	char *base_file = "image_1.bmp";
-	char *compressed_file = "image_1.bmp.compressed";
-	char *uncompressed_file = "image_1_uncompressed.bmp";
+	char *base_file = "Test/image_1.bmp";
+	char *compressed_file = "Test/image_1.bmp.compressed";
+	char *uncompressed_file = "Test/image_1_uncompressed.bmp";
 
 	printf("\n  Compressing file...\n");
 	compress_file(base_file, compressed_file);
