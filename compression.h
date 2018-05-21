@@ -63,7 +63,7 @@ bit_buffer_t char_to_buffer(char c)
 *******************************************************************************/
 char buffer_to_char(bit_buffer_t b)
 {
-	char val;
+	unsigned char val = 0;
 
 	int i;
 	for (i = 0; i < 8; i++)
@@ -128,7 +128,6 @@ void display_buffer(bit_buffer_t b)
 }
 
 
-/* looks like this isnt used */
 /*******************************************************************************
  * Gets the next bit in a bit buffer. If we have run out of bits, returns -1.
  *
@@ -219,53 +218,59 @@ int compress_file(char *target_file, char *destination_file)
 		exit(2);
 	}
 
+	int bytes_written = 0;
+
 	/* string of bits */
 	char *bit_string = "";
-	char one_byte;
+	char write_byte;
 
-	int count = 0;
+	/* bit buffer to use */
 	bit_buffer_t buffer;
 	clear_buffer(&buffer);
 
-	/* read the file char by char*/
-	char c;
-	while ((c = getc(target_p)) != EOF)
-	{
-		/* for each character, look up what the compressed bit string is */
-		/*int success = */char_to_bits(c, &bit_string);
+	/* get the filesize of target */
+	long file_size;
+	fseek(target_p, 0L, SEEK_END);
+	file_size = ftell(target_p);
+	rewind(target_p);
+	printf("  Target filesize is %lu\n", file_size);
 
-		printf("size of bitstring is %lu\n", strlen(bit_string));
+	/* read the file char by char*/
+	unsigned char c;
+	int count;
+	int char_count = 0;
+	while (char_count < file_size)
+	{
+		c = getc(target_p);
+		++char_count;
+
+		/* for each character, look up what the compressed bit string is */
+		char_to_code(c, &bit_string);
 
 		/* have a count. for each bit we read, increment it by one */
 		for (count = 0; count < strlen(bit_string); ++count)
 		{
-			/*printf("count is up to %d\n", count);*/
-
 			/* move the bits into a bit buffer */
 			if (add_bit_char(&buffer, bit_string[count]) == 1)
 			{
 				/* when the size of the bit buffer is 8, write that byte to a file */
-				/*printf("Would write %d\n", buffer_to_char(buffer));*/
-				display_buffer(buffer);
+				write_byte = buffer_to_char(buffer);
 
-				one_byte = buffer_to_char(buffer);
-				fwrite(&one_byte, 1, 2, destination_p);
+				fwrite(&write_byte, 1, 1, destination_p);
+				++bytes_written;
 
 				/* empty the bit buffer */
 				clear_buffer(&buffer);
 			}
 		}
-
-		printf("Left over buffer is of size %d and is : ", buffer.size);
-		display_buffer(buffer);
-
-		/* write byte to file */
-
 	}
-	/* write the left over bits to file */
-	one_byte = buffer_to_char(buffer);
-	fwrite(&one_byte, 1, 1, destination_p);
 
+	/* write the left over bits to file */
+	write_byte = buffer_to_char(buffer);
+	fwrite(&write_byte, 1, 1, destination_p);
+	++bytes_written;
+
+	printf("  Compressed file size is %d bytes\n", bytes_written);
 
 	/* close the files */
 	fclose(target_p);
@@ -305,17 +310,62 @@ int decompress_file(char *target_file, char *destination_file)
 		exit(2);
 	}
 
+	int bytes_written = 0;
 
-	/* read characters as individual bits */
+	/* string of bits */
+	char bit_string[LONGEST_CODE+1] = "";
+	char write_byte;
 
+	/* bit buffer to use */
+	bit_buffer_t buffer;
+	clear_buffer(&buffer);
 
-	/* find the strings of bits that correlate to a character */
+	/* get the filesize of target */
+	long file_size;
+	fseek(target_p, 0L, SEEK_END);
+	file_size = ftell(target_p);
+	rewind(target_p);
+	printf("  Target filesize is %lu\n", file_size);
 
-	/* write that character to the file */
+	/* read the file char by char */
+	unsigned char c;
+	int count;
+	int char_count = 0;
+	while (char_count < file_size)
+	{
+		c = getc(target_p);
+		++char_count;
+
+		/* for each character, get the bits */
+		buffer = char_to_buffer(c);
+
+		/* for each bit in the buffer */
+		for (count = 0; count < 8; ++count)
+		{
+
+			/* add it to the bit string and check it */
+			strcat(bit_string, 
+				get_next_bit(&buffer) == 0 ? "0" : "1"
+			);
+
+			/* if we found a code */
+			if (code_to_char(&write_byte, bit_string) == 0)
+			{
+				/* write that decoded char to file */
+				fwrite(&write_byte, 1, 1, destination_p);
+				++bytes_written;
+
+				/* clear the bitstring */
+				strcpy(bit_string, "");
+			}
+		}
+	}
+
+	printf("  Decompressed file size is %d bytes\n", bytes_written);
 
 	/* close the files */
 	fclose(target_p);
 	fclose(destination_p);
-	
+
 	return 0;
 }

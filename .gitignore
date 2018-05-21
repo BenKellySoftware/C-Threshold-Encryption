@@ -2,3 +2,4 @@
 *.compressed
 *.bin
 *.hex
+*.inspect

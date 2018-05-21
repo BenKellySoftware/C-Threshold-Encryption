@@ -29,7 +29,9 @@ void test_bit_buffer_creation(void);
 void test_bit_buffer_reading(void);
 void test_compress_char(void);
 void test_compression(void);
-
+void test_compressed_file(void);
+void test_decompression(void);
+void test_full_compress(void);
 
 int main(void)
 {
@@ -38,8 +40,11 @@ int main(void)
 	/*test_bit_buffer_creation();*/
 	/*test_bit_buffer_reading();*/
 	/*test_compress_char();*/
-	test_compression();
-
+	/*test_compression();*/
+	/*test_compressed_file();*/
+	/*test_decompression();*/
+	test_full_compress();
+	
 	return 0;
 }
 
@@ -134,7 +139,7 @@ void test_compress_char(void)
 		char *s = "";
 		printf("  Character compressing is %i\n", file_text[i]);
 
-		int success = char_to_bits(file_text[i], &s);
+		int success = char_to_code(file_text[i], &s);
 
 		printf("  Compressed is %s\n", s);
 		printf("  Was %sa success\n", success ? "not " : "");
@@ -154,7 +159,67 @@ void test_compression(void)
 	char *destination_file = "compress_this_file.bin";
 
 	int success = compress_file(target_file, destination_file);
-	printf("\nWas %sa success\n", success ? "not " : "");
+	printf("Was %sa success\n", success ? "not " : "");
 
+	printf("\n");
+}
+
+
+void test_decompression(void)
+{
+	printf("Running test_decompression\n");
+
+	char *target_file = "compress_this_file.bin";
+	char *destination_file = "decompress_this_file.txt";
+
+	int success = decompress_file(target_file, destination_file);
+	printf("Was %sa success\n", success ? "not " : "");
+
+	printf("\n");
+}
+
+
+void test_compressed_file(void)
+{
+	printf("Running test_compressed_file\n");
+	char *filename = "compress_this_file.bin";
+
+	FILE *fp = fopen(filename, "r");
+	if (fp == NULL)
+	{
+		fprintf(stderr, "Error opening target file\n");
+		exit(1);
+	}
+	
+	int count = 0;
+	char c = '\0';
+	while ((c = getc(fp)) && count < 14)
+	{
+		bit_buffer_t b = char_to_buffer(c);
+		display_buffer(b);
+		count++;
+	}
+
+	fclose(fp);
+
+	printf("\n");
+}
+
+
+void test_full_compress(void)
+{
+	printf("Running full_test_compression\n");
+
+	char *base_file = "image_1.bmp";
+	char *compressed_file = "image_1.bmp.compressed";
+	char *uncompressed_file = "image_1_uncompressed.bmp";
+
+	printf("\n  Compressing file...\n");
+	compress_file(base_file, compressed_file);
+
+	printf("\n  Decompressing file...\n");
+	decompress_file(compressed_file, uncompressed_file);
+
+	printf("\n  Done!\n");
 	printf("\n");
 }
