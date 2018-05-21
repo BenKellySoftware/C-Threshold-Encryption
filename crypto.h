@@ -32,6 +32,14 @@ typedef struct point {
 } point_t;
 
 
+/* prototypes */
+char * generate_key(void);
+int find_file_size(char* filename, long* filesize);
+int read_file(char* filename, char* data, long* filesize);
+double algorithmn_encrypt(double input, double key);
+double algorithmn_decrypt(double input, double key);
+int write_file(char* filename, char* data, long filesize);
+
 
 /*******************************************************************************
 * Encrypts a file with a key using division/ modulus, as well as XORing the
@@ -69,12 +77,13 @@ int encrypt_file(char* filename, char* key) {
 			/*ENCRYPTION STUFF HERE*/
 			char* data_encrypted = (char*) malloc((*data_size) * sizeof(char)); /*alliocate space for the ENCRYPTED data*/
 
-			for (int i = 0; i < *data_size; i++) {
+			int i;
+			for (i = 0; i < *data_size; i++) {
 				data_encrypted[i] = (char) algorithmn_encrypt((double) data_clean[i], key_rand_no);
 			}
 
 			if (error == 0) {/*if we have no errors so far, we know it is safe to return the data*/
-				*key = key_rand;/*give back the key*/
+				key = key_rand;/*give back the key*/
 				write_file(filename, data_encrypted, *data_size);/*STORE ENCRYPTED DATA TO FILE*/
 			}
 
@@ -123,7 +132,8 @@ int decrypt_file(char* filename, char* key) {
 			/*DECRYPTION STUFF HERE*/
 			char* data_clean = (char*)malloc((*data_size) * sizeof(char)); /*alliocate space for the unenccrypted (clean) data*/
 
-			for (int i = 0; i < *data_size; i++) {
+			int i;
+			for (i = 0; i < *data_size; i++) {
 				data_clean[i] = (char)algorithmn_decrypt((double)data_encrypted[i], key_no);
 			}
 
@@ -173,7 +183,7 @@ double algorithmn_decrypt(double input, double key) {/*input key and encrypted d
 * - Generated key
 *
 *******************************************************************************/
-char * generate_key() {
+char * generate_key(void) {
 	char * key = (char*) malloc(3 * sizeof(char));
 	key[0] = (char) rand_int(1,255);
 	key[1] = (char) rand_int(1, 255);
@@ -198,7 +208,7 @@ char * generate_key() {
 // - 0 if successful, otherwise 1
 //
 //////////////////////////////////////////////////////////////////////////////*/
-int write_file(char* filename, char* data, long* filesize) {
+int write_file(char* filename, char* data, long filesize) {
 	int error = 0; /*boolean for error. if 0, all good. if 1, we have problems*/
 	FILE* file;
 	file = fopen(filename, "w");
@@ -213,15 +223,15 @@ int write_file(char* filename, char* data, long* filesize) {
 		rewind(file);
 		*/
 
-		long fread_result = fwrite(data, 1, *filesize, file);
-		if (fread_result != *filesize) {
+		long fread_result = fwrite(data, 1, filesize, file);
+		if (fread_result != filesize) {
 			error = 1;
 		}
 	}
 	else {
 		error = 1;
 	}
-	if (fclose(filename) == 1) {
+	if (fclose(file) == 1) {
 		error = 1;
 	}
 	return error;
@@ -269,7 +279,7 @@ int read_file(char* filename, char* data, long* filesize) {
 		error = 1;
 	}/*if|file!=NULL*/
 
-	if (fclose(filename) == 1) {
+	if (fclose(file) == 1) {
 		error = 1;
 	}
 
@@ -305,7 +315,7 @@ int find_file_size(char* filename, long* filesize) {
 		error = 1;
 	}/*if|file!=NULL*/
 
-	if (fclose(filename) == 1) {
+	if (fclose(file) == 1) {
 		error = 1;
 	}
 
