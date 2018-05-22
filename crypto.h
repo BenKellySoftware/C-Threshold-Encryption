@@ -33,12 +33,14 @@ typedef struct point {
 
 
 /* prototypes */
-char * generate_key(void);
+
+/*I don't think I need these, but I if it turns out I do, I'll uncomment it*/
+/*char * generate_key(void);
 int find_file_size(char* filename, long* filesize);
 int read_file(char* filename, char* data, long* filesize);
 double algorithmn_encrypt(double input, double key);
 double algorithmn_decrypt(double input, double key);
-int write_file(char* filename, char* data, long filesize);
+int write_file(char* filename, char* data, long filesize);*/
 
 
 /*******************************************************************************
@@ -166,7 +168,7 @@ char * generate_key(void)
     key[4] = (char)rand_int(1, 255);
     key[5] = (char)rand_int(1, 255);
     return key;
-}
+};
 
 
 /*******************************************************************************
@@ -211,7 +213,7 @@ int write_file(char* filename, char* data, long filesize) {
         error = 1;
     }
     return error;
-}
+};
 
 /*******************************************************************************
  * Reads from a file (wether it be encrypted or decrypted)
@@ -261,7 +263,7 @@ int read_file(char* filename, char* data, long* filesize)
     }
 
     return error;
-}
+};
 
 /*******************************************************************************
  * Finds the size of a file (doesn't look at data at all)
@@ -301,7 +303,7 @@ int find_file_size(char* filename, long* filesize)
     }
 
     return error;
-}
+};
 
 
 /*******************************************************************************
