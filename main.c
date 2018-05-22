@@ -28,7 +28,7 @@
 /* prototypes */
 int retrieve_recipe(char *filename, point_t a, point_t b, point_t c);
 int add_recipe(char *filename);
-int invalidPrintMenu(int input);
+int validPrintMenu(int choice);
 
 
 /*******************************************************************************
@@ -93,46 +93,30 @@ int add_recipe(char *filename)
 *******************************************************************************/
 int main(int argc, char* argv[])
 {
-	int input;		  
+	int choice;		  
 
-	if (argc < 1) /* no arguement entered- therefore use scanf */
+	colour_printf("blue", "Welcome to the Bepis Gola Database\n");
+	if (argc <= 1) /* no arguement entered- therefore use scanf */
 	{
-		colour_printf("blue", "Welcome to the Bepis Gola Database\n");
 		do
 		{		
 			printf("\n"
 			"1. add a recipe\n"
 			"2. view the recipe\n"
 			"Please enter a number that correlates with your choice above>\n");
-			scanf("%d", &input);
+			scanf("%d", &choice);
 		} 
-		while(invalidPrintMenu(input) == 0);
-
-		if (input == 1)
-		{
-			printf("You have chosen to add a recipe.\n");
-			add_recipe(*filename);
-		}
-		if (input == 2)
-		{
-			printf("You have chosen to view the recipe.\n");
-			retrieve_recipe(*filename, a, b, c);
-		}
+		while(validPrintMenu(choice));
 	}
-
 	else /* arguements already entered */
 	{
 		if (strcmp(argv[1], "-a") == 0)
 		{
-			printf("You have chosen to add a recipe.\n");
-			add_recipe(*filename);
-			return 0;
+			choice = 1;
 		}
 		else if (strcmp(argv[1], "-v") == 0)
 		{
-			printf("You have chosen to view the recipe.\n");
-			retrieve_recipe(*filename, a, b, c);
-			return 0; 
+			choice = 2;
 		}
 		else 
 		{
@@ -140,26 +124,38 @@ int main(int argc, char* argv[])
 			return 1;
 		}
 	}
+
+	if (choice == 1)
+	{
+		printf("You have chosen to add a recipe.\n");
+		add_recipe(*filename);
+	}
+	if (choice == 2)
+	{
+		printf("You have chosen to view the recipe.\n");
+		retrieve_recipe(*filename, a, b, c);
+	}
 	return 0;
 }
 
 /*******************************************************************************
- * This function checks for valid input choice from user. 
+ * This function checks for valid choice choice from user. 
  *  
  * Author: 
  * - Rachel
  *
  * Inputs:
- * - int choice
+ * - The users choice
  *
  * Outputs:
- * - returns 1 or 0
+ * - 1 for valid
+ * - 0 for invalid
 *******************************************************************************/
-int invalidPrintMenu(int input)
+int validPrintMenu(int choice)
 {
-    if (input < 1 || input > 2)
+    if (choice < 1 || choice > 2)
     {
-        printf("Invalid input\n");
+        printf("Invalid choice\n");
         return 0;
     } 
     return 1;
