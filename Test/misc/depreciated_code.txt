@@ -1,0 +1,139 @@
+/*RANDOM CODE*/
+/*These are just random notes and stuff- where we keep clode that we no longer use, but still
+want written down- JC*/
+
+
+
+/*******************************************************************************
+ * Creates an encrypted file
+ *
+ * Author:
+ * - Jack
+ *
+ * Inputs:
+ * - File name (and address)
+ * - Encrypted data to be written
+ *
+ * Outputs:
+ * - 0 if successful, otherwise 1
+ *
+ ******************************************************************************/
+int write_file(char* filename, char* data, long filesize) {
+    int error = 0; /*boolean for error. if 0, all good. if 1, we have problems*/
+    FILE* file;
+    file = fopen(filename, "w");
+
+    if (file != NULL) {
+        /*write to file*/
+
+        /*used if we want to find the file size. here it is already given*/
+        /*
+        fseek(file, 0, SEEK_END);
+        *filesize = ftell(file);
+        rewind(file);
+        */
+
+        long fread_result = fwrite(data, 1, filesize, file);
+        if (fread_result != filesize)
+        {
+            error = 1;
+        }
+    }
+    else {
+        error = 1;
+    }
+    if (fclose(file) == 1) {
+        error = 1;
+    }
+    return error;
+};
+
+/*******************************************************************************
+ * Reads from a file (wether it be encrypted or decrypted)
+ *
+ * Author:
+ * - Jack
+ *
+ * Inputs:
+ * - File name (and address)
+ *
+ *
+ * Outputs:
+ * - data in file (pointer)
+ * - length of file (pointer)
+ * - returns 0 if successful, otherwise 1
+ *
+ ******************************************************************************/
+int read_file(char* filename, char* data, long* filesize)
+{
+    int error = 0; /*boolean for error. if 0, all good. if 1, we have problems*/
+    FILE* file; /*file stream*/
+    file = fopen(filename, "r");
+    if (file != NULL) {
+        /*read file*/
+        fseek(file, 0, SEEK_END); /*go to end*/
+        *filesize = ftell(file); /*find location value at end*/
+        rewind(file); /*go back to beginning*/
+
+        char * file_buffer = (char*)malloc(sizeof(char)*(*filesize)); /*allocate memory to contain the file*/
+
+        long fread_result = fread(file_buffer, 1, *filesize, file); /*store WHOLE FILE in file_buffer*/
+        if (fread_result != *filesize) { /*if buffer is, for whatever reason, a different size to what we anticipated*/
+            error = 1;
+        }
+        else {
+            /*write the data (up until this point, we keep data separate from parameters for secutrity purposes)*/
+            *data = *file_buffer;
+        }/*if|fread_result*/
+
+
+    } else {
+        error = 1;
+    }/*if|file!=NULL*/
+
+    if (fclose(file) == 1) {
+        error = 1;
+    }
+
+    return error;
+};
+
+/*******************************************************************************
+ * Finds the size of a file (doesn't look at data at all)
+ * NOTE: his function is NOT used by read_file.
+ *
+ * Author:
+ * - Jack
+ *
+ * Inputs:
+ * - File name (and address)
+ *
+ *
+ * Outputs:
+ * - length of file (pointer)
+ * - returns 0 if successful, otherwise 1
+ *
+*******************************************************************************/
+int find_file_size(char* filename, long* filesize)
+{
+    int error = 0; /*boolean for error. if 0, all good. if 1, we have problems*/
+    FILE* file; /*file stream*/
+    file = fopen(filename, "r");
+    if (file != NULL)
+    {
+        fseek(file, 0, SEEK_END); /*go to end*/
+        *filesize = ftell(file); /*find location value at end*/
+        rewind(file); /*go back to beginning*/
+    }
+    else
+    {
+        error = 1;
+    }/*if|file!=NULL*/
+
+    if (fclose(file) == 1)
+    {
+        error = 1;
+    }
+
+    return error;
+};
