@@ -1,11 +1,12 @@
+
 #ifndef STDIO_H
-	#define STDIO_H value
-	#include <stdio.h>
+#define STDIO_H value
+#include <stdio.h>
 #endif
 
 #ifndef STRING_H
-	#define STRING_H value
-	#include <string.h>
+#define STRING_H value
+#include <string.h>
 #endif
 
 /* ansi codes for terminal colour */
@@ -22,6 +23,9 @@
 /*******************************************************************************
  * Prints text in a colour
  *
+ * Author:
+ * - Tom
+ *
  * Inputs:
  * - colour  : Colour to print things in
  * - message : Text to print in the colour
@@ -32,27 +36,27 @@
 *******************************************************************************/
 void colour_printf(const char *colour, const char* message)
 {
-	/* Set the colour to what was asked */
-	if (strcmp(colour, "red") == 0)
-		printf(COLOUR_RED);
-	else if (strcmp(colour, "green") == 0)
-		printf(COLOUR_GREEN);
-	else if (strcmp(colour, "yellow") == 0)
-		printf(COLOUR_YELLOW);
-	else if (strcmp(colour, "blue") == 0)
-		printf(COLOUR_BLUE);
-	else if (strcmp(colour, "magenta") == 0)
-		printf(COLOUR_MAGENTA);
-	else if (strcmp(colour, "cyan") == 0)
-		printf(COLOUR_CYAN);
-	else if (strcmp(colour, "white") == 0)
-		printf(COLOUR_WHITE);
-	else
-		printf(COLOUR_DEFAULT);
+    /* Set the colour to what was asked */
+    if (strcmp(colour, "red") == 0)
+        printf(COLOUR_RED);
+    else if (strcmp(colour, "green") == 0)
+        printf(COLOUR_GREEN);
+    else if (strcmp(colour, "yellow") == 0)
+        printf(COLOUR_YELLOW);
+    else if (strcmp(colour, "blue") == 0)
+        printf(COLOUR_BLUE);
+    else if (strcmp(colour, "magenta") == 0)
+        printf(COLOUR_MAGENTA);
+    else if (strcmp(colour, "cyan") == 0)
+        printf(COLOUR_CYAN);
+    else if (strcmp(colour, "white") == 0)
+        printf(COLOUR_WHITE);
+    else
+        printf(COLOUR_DEFAULT);
 
-	/* Print the message */
-	printf("%s", message);
+    /* Print the message */
+    printf("%s", message);
 
-	/* Set colour to hatever the default terminal colour is */
-	printf(COLOUR_DEFAULT);	
+    /* Set colour to hatever the default terminal colour is */
+    printf(COLOUR_DEFAULT); 
 }
