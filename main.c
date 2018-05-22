@@ -54,32 +54,34 @@ int add_recipe(char *filename);
  * Author: 
  * - Rachel
  *
- * There are two different modes (-a and -v).
+ * There are two different modes that can be selected (-a and -v).
  * Mode -a is to add a recipe.
  * Mode -v is to view the recipe.
 *******************************************************************************/
 int main(int argc, char* argv[])
 {
-	int result;						/* result = 1 means that it hasn't worked */
+	int result;	/* result = 1 ; means that it hasn't worked */
+	int input;		  
 
-	colour_printf("blue", "Welcome to the Bepis Gola Database\n");
-
-	do
+	if (argc <= 1) /* no arguement entered- therefore use scanf */
 	{
-		if (argc <= 1)
-		{
-			printf("Please specific either mode '-a' to add a recipe");
-			printf("or mode '-v' to view the recipe.\n");
-			result = 1;					  
-		}
+		colour_printf("blue", "Welcome to the Bepis Gola Database\n");
+		printf("\n"
+			"1. add a recipe\n"
+			"2. view the recipe\n"
+			"Please enter a number that correlates with your choice above>\n");
+		scanf("%d", &input);
+	}
 
-		if (strcmp(argv[1], "-a") == 0)
+	else /* arguements already entered */
+	{
+		if (strcmp(argv[2], "-a") == 0)
 		{
 			printf("You have chosen to add a recipe.\n");
 			add_recipe(*filename);
 			result = 0;
 		}
-		else if (strcmp(argv[1], "-v") == 0)
+		else if (strcmp(argv[2], "-v") == 0)
 		{
 			printf("You have chosen to view the recipe.\n");
 			retrieve_recipe(*filename, a, b, c);
@@ -90,7 +92,7 @@ int main(int argc, char* argv[])
 			printf("There is no mode for the input you have entered.\n");
 			result = 1;
 		}
-	} while (result == 1);
-	
+	}
+
 	return 0;
 }
