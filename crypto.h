@@ -22,13 +22,13 @@
 
 /* structure for holding the coefficients of polynomial */
 typedef struct polynomial {
-	int a, b, c;
+    int a, b, c;
 } polynomial_t;
 
 
 /* structure for a point on a polynomial */
 typedef struct point {
-	int x, y;
+    int x, y;
 } point_t;
 
 
@@ -124,176 +124,184 @@ int decrypt_file(char* data_encrypted, char* key, long data_size, char* data_cln
 };
 
 
-/*//////////////////////////////////////////////////////////////////////////////
-// Simple equations to manipulate data in order to encrypt.
-//
-// The specific mathematical equation being used here is definetely up
-// for debate.
-//
-// Author:
-// - Jack
-//
-//////////////////////////////////////////////////////////////////////////////*/
+/*******************************************************************************
+ * Simple equations to manipulate data in order to encrypt.
+ *
+ * The specific mathematical equation being used here is definetely up
+ * for debate.
+ *
+ * Author:
+ * - Jack
+ *
+*******************************************************************************/
 double algorithmn_encrypt(double input, double key) {/*input key and clean data, output encrypted data*/
-	return pow(input, key);
+    return pow(input, key);
 };
 
 double algorithmn_decrypt(double input, double key) {/*input key and encrypted data, output clean data*/
-	return pow(input, (1/key));
+    return pow(input, (1/key));
 };
 
 
 /*******************************************************************************
-* Generates a random key, based upon the size of the file.
-*
-* Author:
-* - Jack
-*
-* Inputs:
-* - none
-*
-* Outputs:
-* - Generated key
-*
+ * Generates a random key, based upon the size of the file.
+ *
+ * Author:
+ * - Jack
+ *
+ * Inputs:
+ * - none
+ *
+ * Outputs:
+ * - Generated key
+ *
 *******************************************************************************/
-char * generate_key(void) {
-	char * key = (char*) malloc(3 * sizeof(char));
-	key[0] = (char) rand_int(1,255);
-	key[1] = (char) rand_int(1, 255);
-	key[2] = (char) rand_int(1, 255);
-	key[3] = (char)rand_int(1, 255);
-	key[4] = (char)rand_int(1, 255);
-	key[5] = (char)rand_int(1, 255);
-	return key;
-};
+char * generate_key(void)
+{
+    char * key = (char*) malloc(3 * sizeof(char));
+    key[0] = (char) rand_int(1,255);
+    key[1] = (char) rand_int(1, 255);
+    key[2] = (char) rand_int(1, 255);
+    key[3] = (char)rand_int(1, 255);
+    key[4] = (char)rand_int(1, 255);
+    key[5] = (char)rand_int(1, 255);
+    return key;
+}
 
-/*//////////////////////////////////////////////////////////////////////////////
-* Creates an encrypted file (No Longer In Use)
-//
-// Author:
-// - Jack
-//
-// Inputs:
-// - File name (and address)
-// - Encrypted data to be written
-//
-// Outputs:
-// - 0 if successful, otherwise 1
-//
-//////////////////////////////////////////////////////////////////////////////*/
+
+/*******************************************************************************
+ * Creates an encrypted file
+ *
+ * Author:
+ * - Jack
+ *
+ * Inputs:
+ * - File name (and address)
+ * - Encrypted data to be written
+ *
+ * Outputs:
+ * - 0 if successful, otherwise 1
+ *
+ ******************************************************************************/
 int write_file(char* filename, char* data, long filesize) {
-	int error = 0; /*boolean for error. if 0, all good. if 1, we have problems*/
-	FILE* file;
-	file = fopen(filename, "w");
+    int error = 0; /*boolean for error. if 0, all good. if 1, we have problems*/
+    FILE* file;
+    file = fopen(filename, "w");
 
-	if (file != NULL) {
-		/*write to file*/
+    if (file != NULL) {
+        /*write to file*/
 
-		/*used if we want to find the file size. here it is already given*/
-		/*
-		fseek(file, 0, SEEK_END);
-		*filesize = ftell(file);
-		rewind(file);
-		*/
+        /*used if we want to find the file size. here it is already given*/
+        /*
+        fseek(file, 0, SEEK_END);
+        *filesize = ftell(file);
+        rewind(file);
+        */
 
-		long fread_result = fwrite(data, 1, filesize, file);
-		if (fread_result != filesize) {
-			error = 1;
-		}
-	}
-	else {
-		error = 1;
-	}
-	if (fclose(file) == 1) {
-		error = 1;
-	}
-	return error;
-};
+        long fread_result = fwrite(data, 1, filesize, file);
+        if (fread_result != filesize)
+        {
+            error = 1;
+        }
+    }
+    else {
+        error = 1;
+    }
+    if (fclose(file) == 1) {
+        error = 1;
+    }
+    return error;
+}
 
-/*//////////////////////////////////////////////////////////////////////////////
-* Reads from a file (wether it be encrypted or decrypted, No Longer In Use)
-//
-// Author:
-// - Jack
-//
-// Inputs:
-// - File name (and address)
-//
-//
-// Outputs:
-// - data in file (pointer)
-// - length of file (pointer)
-// - returns 0 if successful, otherwise 1
-//
-//////////////////////////////////////////////////////////////////////////////*/
-int read_file(char* filename, char* data, long* filesize) {
-	int error = 0; /*boolean for error. if 0, all good. if 1, we have problems*/
-	FILE* file; /*file stream*/
-	file = fopen(filename, "r");
-	if (file != NULL) {
-		/*read file*/
-		fseek(file, 0, SEEK_END); /*go to end*/
-		*filesize = ftell(file); /*find location value at end*/
-		rewind(file); /*go back to beginning*/
+/*******************************************************************************
+ * Reads from a file (wether it be encrypted or decrypted)
+ *
+ * Author:
+ * - Jack
+ *
+ * Inputs:
+ * - File name (and address)
+ *
+ *
+ * Outputs:
+ * - data in file (pointer)
+ * - length of file (pointer)
+ * - returns 0 if successful, otherwise 1
+ *
+ ******************************************************************************/
+int read_file(char* filename, char* data, long* filesize)
+{
+    int error = 0; /*boolean for error. if 0, all good. if 1, we have problems*/
+    FILE* file; /*file stream*/
+    file = fopen(filename, "r");
+    if (file != NULL) {
+        /*read file*/
+        fseek(file, 0, SEEK_END); /*go to end*/
+        *filesize = ftell(file); /*find location value at end*/
+        rewind(file); /*go back to beginning*/
 
-		char * file_buffer = (char*)malloc(sizeof(char)*(*filesize)); /*allocate memory to contain the file*/
+        char * file_buffer = (char*)malloc(sizeof(char)*(*filesize)); /*allocate memory to contain the file*/
 
-		long fread_result = fread(file_buffer, 1, *filesize, file); /*store WHOLE FILE in file_buffer*/
-		if (fread_result != *filesize) { /*if buffer is, for whatever reason, a different size to what we anticipated*/
-			error = 1;
-		}
-		else {
-			/*write the data (up until this point, we keep data separate from parameters for secutrity purposes)*/
-			*data = *file_buffer;
-		}/*if|fread_result*/
+        long fread_result = fread(file_buffer, 1, *filesize, file); /*store WHOLE FILE in file_buffer*/
+        if (fread_result != *filesize) { /*if buffer is, for whatever reason, a different size to what we anticipated*/
+            error = 1;
+        }
+        else {
+            /*write the data (up until this point, we keep data separate from parameters for secutrity purposes)*/
+            *data = *file_buffer;
+        }/*if|fread_result*/
 
 
-	} else {
-		error = 1;
-	}/*if|file!=NULL*/
+    } else {
+        error = 1;
+    }/*if|file!=NULL*/
 
-	if (fclose(file) == 1) {
-		error = 1;
-	}
+    if (fclose(file) == 1) {
+        error = 1;
+    }
 
-	return error;
-};
+    return error;
+}
 
-/*//////////////////////////////////////////////////////////////////////////////
-// Finds the size of a file (doesn't look at data at all)
-// NOTE: his function is NOT used by read_file.
-//
-// Author:
-// - Jack
-//
-// Inputs:
-// - File name (and address)
-//
-//
-// Outputs:
-// - length of file (pointer)
-// - returns 0 if successful, otherwise 1
-//
-//////////////////////////////////////////////////////////////////////////////*/
-int find_file_size(char* filename, long* filesize) {
-	int error = 0; /*boolean for error. if 0, all good. if 1, we have problems*/
-	FILE* file; /*file stream*/
-	file = fopen(filename, "r");
-	if (file != NULL) {
-		fseek(file, 0, SEEK_END); /*go to end*/
-		*filesize = ftell(file); /*find location value at end*/
-		rewind(file); /*go back to beginning*/
-	}
-	else {
-		error = 1;
-	}/*if|file!=NULL*/
+/*******************************************************************************
+ * Finds the size of a file (doesn't look at data at all)
+ * NOTE: his function is NOT used by read_file.
+ *
+ * Author:
+ * - Jack
+ *
+ * Inputs:
+ * - File name (and address)
+ *
+ *
+ * Outputs:
+ * - length of file (pointer)
+ * - returns 0 if successful, otherwise 1
+ *
+*******************************************************************************/
+int find_file_size(char* filename, long* filesize)
+{
+    int error = 0; /*boolean for error. if 0, all good. if 1, we have problems*/
+    FILE* file; /*file stream*/
+    file = fopen(filename, "r");
+    if (file != NULL)
+    {
+        fseek(file, 0, SEEK_END); /*go to end*/
+        *filesize = ftell(file); /*find location value at end*/
+        rewind(file); /*go back to beginning*/
+    }
+    else
+    {
+        error = 1;
+    }/*if|file!=NULL*/
 
-	if (fclose(file) == 1) {
-		error = 1;
-	}
+    if (fclose(file) == 1)
+    {
+        error = 1;
+    }
 
-	return error;
-};
+    return error;
+}
 
 
 /*******************************************************************************
@@ -309,12 +317,13 @@ int find_file_size(char* filename, long* filesize) {
  * - A polynomial object
  *
 *******************************************************************************/
-polynomial_t create_polynomial_from_key(char *key) {
-	polynomial_t line;
-	line.a = (key[0] << 8) | key[1];
-	line.b = (key[2] << 8) | key[3];
-	line.c = (key[4] << 8) | key[5];
-	return line;
+polynomial_t create_polynomial_from_key(char *key)
+{
+    polynomial_t line;
+    line.a = (key[0] << 8) | key[1];
+    line.b = (key[2] << 8) | key[3];
+    line.c = (key[4] << 8) | key[5];
+    return line;
 }
 
 
@@ -334,12 +343,12 @@ polynomial_t create_polynomial_from_key(char *key) {
 *******************************************************************************/
 point_t pick_point(polynomial_t poly)
 {
-	point_t point;
+    point_t point;
 
-	point.x = rand_int(POINT_X_MIN, POINT_X_MAX);
-	point.y = (poly.a * pow(point.x, 2)) + (poly.b * point.x) + poly.c;
+    point.x = rand_int(POINT_X_MIN, POINT_X_MAX);
+    point.y = (poly.a * pow(point.x, 2)) + (poly.b * point.x) + poly.c;
 
-	return point;
+    return point;
 }
 
 
@@ -360,18 +369,18 @@ point_t pick_point(polynomial_t poly)
  *
 *******************************************************************************/
 polynomial_t find_polynomial(point_t p1, point_t p2, point_t p3) {
-	polynomial_t poly;
+    polynomial_t poly;
 
-	poly.a = p1.y/((p1.x-p2.x)*(p1.x-p3.x)) + p2.y/((p2.x-p1.x)*(p2.x-p3.x)) + p3.y/((p3.x-p1.x)*(p3.x-p2.x));
-	poly.b = -p1.y*(p2.x+p3.x)/((p1.x-p2.x)*(p1.x-p3.x))
-			 -p2.y*(p1.x+p3.x)/((p2.x-p1.x)*(p2.x-p3.x))
-			 -p3.y*(p1.x+p2.x)/((p3.x-p1.x)*(p3.x-p2.x));
+    poly.a = p1.y/((p1.x-p2.x)*(p1.x-p3.x)) + p2.y/((p2.x-p1.x)*(p2.x-p3.x)) + p3.y/((p3.x-p1.x)*(p3.x-p2.x));
+    poly.b = -p1.y*(p2.x+p3.x)/((p1.x-p2.x)*(p1.x-p3.x))
+             -p2.y*(p1.x+p3.x)/((p2.x-p1.x)*(p2.x-p3.x))
+             -p3.y*(p1.x+p2.x)/((p3.x-p1.x)*(p3.x-p2.x));
 
-	poly.c = p1.y*p2.x*p3.x/((p1.x-p2.x)*(p1.x-p3.x))
-		   + p2.y*p1.x*p3.x/((p2.x-p1.x)*(p2.x-p3.x))
-		   + p3.y*p1.x*p2.x/((p3.x-p1.x)*(p3.x-p2.x));
+    poly.c = p1.y*p2.x*p3.x/((p1.x-p2.x)*(p1.x-p3.x))
+           + p2.y*p1.x*p3.x/((p2.x-p1.x)*(p2.x-p3.x))
+           + p3.y*p1.x*p2.x/((p3.x-p1.x)*(p3.x-p2.x));
 
-	return poly;
+    return poly;
 }
 
 
@@ -389,6 +398,6 @@ polynomial_t find_polynomial(point_t p1, point_t p2, point_t p3) {
  *
 *******************************************************************************/
 char *retrieve_key_from_polynomial(polynomial_t p) {
-	char *key_p = (char *)malloc(sizeof(char) * MASTER_KEY_LEN);
-	return key_p;
+    char *key_p = (char *)malloc(sizeof(char) * MASTER_KEY_LEN);
+    return key_p;
 }
