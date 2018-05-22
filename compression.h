@@ -238,11 +238,10 @@ int compress_file(char *target_file, char *destination_file)
     /* read the file char by char*/
     unsigned char c;
     int count;
-    int char_count = 0;
-    while (char_count < file_size)
+    int char_count;
+    for (char_count = 0; char_count < file_size; ++char_count)
     {
         c = getc(target_p);
-        ++char_count;
 
         /* for each character, look up what the compressed bit string is */
         char_to_code(c, &bit_string);
@@ -330,11 +329,10 @@ int decompress_file(char *target_file, char *destination_file)
     /* read the file char by char */
     unsigned char c;
     int count;
-    int char_count = 0;
-    while (char_count < file_size)
+    int char_count;
+    for (char_count = 0; char_count < file_size; ++char_count)
     {
         c = getc(target_p);
-        ++char_count;
 
         /* for each character, get the bits */
         buffer = char_to_buffer(c);
