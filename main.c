@@ -79,11 +79,14 @@ int add_recipe(char *filename)
  *
  * Author: 
  * - Rachel
-
- * Inputs: argc: arguement count
- 		    argv: arguement value
- * Outputs: none
-
+ *
+ * Inputs: 
+ * - argc: arguement count
+ * - argv: arguement value
+ *
+ * Outputs: 
+ * - none
+ *
  * There are two different modes that can be selected (-a and -v).
  * Mode -a is to add a recipe.
  * Mode -v is to view the recipe.
@@ -141,10 +144,15 @@ int main(int argc, char* argv[])
 }
 
 /*******************************************************************************
- * This function checks for valid input choice from user.   
- * inputs:
+ * This function checks for valid input choice from user. 
+ *  
+ * Author: 
+ * - Rachel
+ *
+ * Inputs:
  * - int choice
- * outputs:
+ *
+ * Outputs:
  * - returns 1 or 0
 *******************************************************************************/
 int invalidPrintMenu(int input)
