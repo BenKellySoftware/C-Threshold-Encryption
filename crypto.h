@@ -44,108 +44,6 @@ int write_file(char* filename, char* data, long filesize);*/
 
 
 /*******************************************************************************
-* Encrypts a file with a key using division/ modulus, as well as XORing the
-* keys.
-*
-* Author:
-* - Jack
-*
-* Inputs:
-* - clean data: data that needs to be encrypted
-* - data size: size of data (file) in bytes
-*
-* Outputs:
-* - returns 0 if successful, otherwise 1
-* - key : Key used to encrypt file (given as a pointer)
-* - encrypted data (pointer)
-*
-*******************************************************************************/
-int encrypt_file(char* data_clean, char* key, long data_size, char* data_encrypt) {
-	int error = 0; /*boolean for error. if 0, all good. if 1, we have problems*/
-
-	char * key_rand = generate_key(); /*this is the random key, which is the first half of the full key*/
-	/*we must make  decimal version of this, you'll see why in a minute*/
-	long key_rand_no = (int)key_rand[0] + (pow(10,3) * (int) key_rand[1]) + (pow(10,6) * (int) key_rand[2]);
-	key_rand_no = key_rand_no + (pow(10, 9) * (int)key_rand[3] + pow(10, 12) * (int)key_rand[4] + pow(10, 12) * (int)key_rand[5]);
-
-	/*ENCRYPTION STUFF HERE*/
-	char* data_encrypted = (char*) malloc(data_size * sizeof(char)); /*alliocate space for the ENCRYPTED data*/
-
-	int i;
-	for (i = 0; i < *data_size; i++) {
-		data_encrypted[i] = (char) algorithmn_encrypt((double) data_clean[i], key_rand_no);
-	}
-
-	if (error == 0) {/*if we have no errors so far, we know it is safe to return the data*/
-		key = key_rand;/*give back the key*/
-		/*give back encrypted data*/
-		*data_encrypt = *data_encrypted; /*we pass the values instad of locations, so we can free local storage without troubles*/
-	}
-	free(data_encrypted);
-	free(key_rand);
-
-	return error;
-};
-
-
-/*******************************************************************************
-* Decrypts a file with its key using XORing the key, then multiplying with
-* remainder.
-*
-* Author:
-* - Jack
-*
-* Inputs:
-* - filename : Path to file to decrypt
-* - key      : Key used to decrypt the file
-*
-* Outputs:
-* - 0 if successful, otherwise 1
-* - clean (unencrypted) data (as a pointer)
-*
-*******************************************************************************/
-int decrypt_file(char* data_encrypted, char* key, long data_size, char* data_cln) {
-	int error = 0; /*boolean for error. if 0, all good. if 1, we have problems*/
-
-									  /*we must make  decimal version of the key, you'll see why in a minute*/
-	long key_no = (int)key[0] + (pow(10, 3) * (int)key[1]) + (pow(10, 6) * (int)key[2]);
-	key_no = key_no + (pow(10, 9) * (int)key[3] + pow(10, 12) * (int)key[4] + pow(10, 12) * (int)key[5]);
-
-	char* data_clean = (char*)malloc((*data_size) * sizeof(char)); /*alliocate space for the unenccrypted (clean) data*/
-
-	int i;
-	for (i = 0; i < *data_size; i++) {
-		data_clean[i] = (char)algorithmn_decrypt((double)data_encrypted[i], key_no);
-	}
-
-	if (error == 0) {/*if we have no errors so far, we know it is safe to return the data*/
-		*data_cln = *data_clean; /*we pass the values instad of locations, so we can free local storage without troubles*/
-	}
-	free(data_clean);
-	return error;
-};
-
-
-/*******************************************************************************
- * Simple equations to manipulate data in order to encrypt.
- *
- * The specific mathematical equation being used here is definetely up
- * for debate.
- *
- * Author:
- * - Jack
- *
-*******************************************************************************/
-double algorithmn_encrypt(double input, double key) {/*input key and clean data, output encrypted data*/
-    return pow(input, key);
-};
-
-double algorithmn_decrypt(double input, double key) {/*input key and encrypted data, output clean data*/
-    return pow(input, (1/key));
-};
-
-
-/*******************************************************************************
  * Generates a random key, based upon the size of the file.
  *
  * Author:
@@ -169,6 +67,114 @@ char * generate_key(void)
     key[5] = (char)rand_int(1, 255);
     return key;
 };
+
+
+/*******************************************************************************
+ * Simple equations to manipulate data in order to encrypt.
+ *
+ * The specific mathematical equation being used here is definetely up
+ * for debate.
+ *
+ * Author:
+ * - Jack
+ *
+*******************************************************************************/
+double algorithmn_encrypt(double input, double key) {/*input key and clean data, output encrypted data*/
+    return pow(input, key);
+};
+
+double algorithmn_decrypt(double input, double key) {/*input key and encrypted data, output clean data*/
+    return pow(input, (1/key));
+};
+
+
+/*******************************************************************************
+ * Encrypts a file with a key using division/ modulus, as well as XORing the
+ * keys.
+ *
+ * Author:
+ * - Jack
+ *
+ * Inputs:
+ * - clean data: data that needs to be encrypted
+ * - data size: size of data (file) in bytes
+ *
+ * Outputs:
+ * - returns 0 if successful, otherwise 1
+ * - key : Key used to encrypt file (given as a pointer)
+ * - encrypted data (pointer)
+ *
+*******************************************************************************/
+int encrypt_file(char* data_clean, char* key, long data_size, char* data_encrypt) {
+	int error = 0; /*boolean for error. if 0, all good. if 1, we have problems*/
+
+	char * key_rand = generate_key(); /*this is the random key, which is the first half of the full key*/
+	/*we must make  decimal version of this, you'll see why in a minute*/
+	long key_rand_no = (int)key_rand[0] + (pow(10,3) * (int) key_rand[1]) + (pow(10,6) * (int) key_rand[2]);
+	key_rand_no = key_rand_no + (pow(10, 9) * (int)key_rand[3] + pow(10, 12) * (int)key_rand[4] + pow(10, 12) * (int)key_rand[5]);
+
+	/*ENCRYPTION STUFF HERE*/
+	char* data_encrypted = (char*) malloc(data_size * sizeof(char)); /*alliocate space for the ENCRYPTED data*/
+
+	int i;
+	for (i = 0; i < data_size; i++) {
+		data_encrypted[i] = (char) algorithmn_encrypt((double) data_clean[i], key_rand_no);
+	}
+
+	if (error == 0) {/*if we have no errors so far, we know it is safe to return the data*/
+		key = key_rand;/*give back the key*/
+		/*give back encrypted data*/
+		*data_encrypt = *data_encrypted; /*we pass the values instad of locations, so we can free local storage without troubles*/
+	}
+	free(data_encrypted);
+	free(key_rand);
+
+	return error;
+};
+
+
+/*******************************************************************************
+ * Decrypts a file with its key using XORing the key, then multiplying with
+ * remainder.
+ *
+ * Author:
+ * - Jack
+ *
+ * Inputs:
+ * - filename : Path to file to decrypt
+ * - key      : Key used to decrypt the file
+ *
+ * Outputs:
+ * - 0 if successful, otherwise 1
+ * - clean (unencrypted) data (as a pointer)
+ *
+*******************************************************************************/
+int decrypt_file(char* data_encrypted, char* key, long data_size, char* data_cln) {
+	int error = 0; /*boolean for error. if 0, all good. if 1, we have problems*/
+
+	/*we must make  decimal version of the key, you'll see why in a minute*/
+	long key_no = (int)key[0] + (pow(10, 3) * (int)key[1]) + (pow(10, 6) * (int)key[2]);
+	key_no = key_no + (pow(10, 9) * (int)key[3] + pow(10, 12) * (int)key[4] + pow(10, 12) * (int)key[5]);
+
+	char* data_clean = (char*)malloc((data_size) * sizeof(char)); /*alliocate space for the unenccrypted (clean) data*/
+
+	int i;
+	for (i = 0; i < data_size; i++) {
+		data_clean[i] = (char)algorithmn_decrypt((double)data_encrypted[i], key_no);
+	}
+
+	if (error == 0) {/*if we have no errors so far, we know it is safe to return the data*/
+		*data_cln = *data_clean; /*we pass the values instad of locations, so we can free local storage without troubles*/
+	}
+	free(data_clean);
+	return error;
+};
+
+
+
+
+
+
 
 
 /*******************************************************************************

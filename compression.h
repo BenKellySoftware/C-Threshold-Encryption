@@ -9,6 +9,13 @@
 #define HUFFMAN_H
 #endif
 
+#ifndef HELPERS_H
+#include "helpers.h"
+#define HELPERS_H
+#endif
+
+#define COMPRESSED_EXTENSION ".compressed"
+
 
 typedef struct bit_buffer {
     int seek;
@@ -189,7 +196,8 @@ int add_bit_char(bit_buffer_t *b, char c)
 
 
 /*******************************************************************************
- * Compresses a file such that it takes up less space on disc
+ * Compresses a file such that it takes up less space on disc. Adds
+ * COMPRESSED_EXTENSION onto the filename
  *
  * Author: 
  * - Tom
@@ -197,14 +205,17 @@ int add_bit_char(bit_buffer_t *b, char c)
  * Inputs:
  * - codes            : Huffman code file
  * - target_file      : The file to compress
- * - destination_file : The file to write to
  *
  * Output:
  * - 0 if successful, otherwise 1
  *
  ******************************************************************************/
-int compress_file(huffman_code_t *codes, char *target_file, char *destination_file)
+int compress_file(huffman_code_t *codes, char *target_file)
 {
+    char *destination_file = (char*)malloc(strlen(target_file)+strlen(COMPRESSED_EXTENSION));
+    strcpy(destination_file, target_file);
+    strcat(destination_file, COMPRESSED_EXTENSION);
+
     /* open the file */
     FILE *target_p = fopen(target_file, "rb");
     if (target_p == NULL)
@@ -281,7 +292,7 @@ int compress_file(huffman_code_t *codes, char *target_file, char *destination_fi
 
 
 /*******************************************************************************
- * Decompresses a file
+ * Decompresses a file. Strips COMPRESSED_EXTENSION from the filename
  *
  * Author: 
  * - Tom
@@ -294,8 +305,12 @@ int compress_file(huffman_code_t *codes, char *target_file, char *destination_fi
  * - 0 if successful, otherwise 1
  *
  ******************************************************************************/
-int decompress_file(huffman_code_t *codes, char *target_file, char *destination_file)
+int decompress_file(huffman_code_t *codes, char *target_file)
 {
+    char *destination_file = (char*)malloc(strlen(target_file));
+    strcpy(destination_file, target_file);
+    replace_in_string(&destination_file, COMPRESSED_EXTENSION, "");
+
     /* open the files */
     FILE *target_p = fopen(target_file, "rb");
     if (target_p == NULL)

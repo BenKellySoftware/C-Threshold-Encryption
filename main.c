@@ -50,6 +50,12 @@ int validPrintMenu(int choice);
 *******************************************************************************/
 int retrieve_recipe(char *filename, point_t a, point_t b, point_t c)
 {
+	/* run the decryption here */
+
+
+	/* run the decompression here */
+
+
     return 0;
 }
 
@@ -69,6 +75,12 @@ int retrieve_recipe(char *filename, point_t a, point_t b, point_t c)
 *******************************************************************************/
 int add_recipe(char *filename)
 {
+	/* run the compression here */
+
+
+	/* run the encryption here */
+
+
     return 0;
 }
 
@@ -106,16 +118,27 @@ int main(int argc, char* argv[])
 			"Please enter a number that correlates with your choice above>\n");
 			scanf("%d", &choice);
 		} 
-		while(validPrintMenu(choice));
+		while(!validPrintMenu(choice));
 	}
 	else /* arguements already entered */
 	{
+		/* check if argv[1] is "-h" */
+		/* if it is, display the help */
+
 		if (strcmp(argv[1], "-a") == 0)
 		{
+			/* check if argc == 4, ie they entered ./main.out -a target_file */
+
+			/* if they havent entered files, ask them to enter the target and dest file */
+
 			choice = 1;
 		}
 		else if (strcmp(argv[1], "-v") == 0)
 		{
+			/* check if argc == 4, ie they entered ./main.out -v target_file key1 key2 key3 */
+
+			/* if they havent entered files, ask them to enter the target file and points */
+
 			choice = 2;
 		}
 		else 
@@ -125,15 +148,27 @@ int main(int argc, char* argv[])
 		}
 	}
 
+	
+
+
 	if (choice == 1)
 	{
+		/* remove this once target_file and or points are gotten from user input or arguments */
+		char *filename = "Images/recipe.bmp";
+
 		printf("You have chosen to add a recipe.\n");
-		add_recipe(*filename);
+		add_recipe(filename);
 	}
 	if (choice == 2)
 	{
+		/* remove this once target_file and or points are gotten from user input or arguments */
+		char *filename = "Images/recipe.compressed";
+		point_t a;
+		point_t b;
+		point_t c;
+
 		printf("You have chosen to view the recipe.\n");
-		retrieve_recipe(*filename, a, b, c);
+		retrieve_recipe(filename, a, b, c);
 	}
 	return 0;
 }

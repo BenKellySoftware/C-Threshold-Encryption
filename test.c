@@ -211,11 +211,10 @@ void test_compression(void)
 	printf("Running test_compression\n");
 
 	char *target_file = "Test/compress_this_file.txt";
-	char *destination_file = "Test/compress_this_file.bin";
 
 	huffman_code_t *codes = load_huffman_code_from_file("hackerman.codes");
 
-	int success = compress_file(codes, target_file, destination_file);
+	int success = compress_file(codes, target_file);
 	printf("Was %sa success\n", success ? "not " : "");
 
 	printf("\n");
@@ -226,12 +225,11 @@ void test_decompression(void)
 {
 	printf("Running test_decompression\n");
 
-	char *target_file = "Test/compress_this_file.bin";
-	char *destination_file = "Test/decompress_this_file.txt";
+	char *target_file = "Test/decompress_this_file.txt.compressed";
 
 	huffman_code_t *codes = load_huffman_code_from_file("hackerman.codes");
 
-	int success = decompress_file(codes, target_file, destination_file);
+	int success = decompress_file(codes, target_file);
 	printf("Was %sa success\n", success ? "not " : "");
 
 	printf("\n");
@@ -270,16 +268,20 @@ void test_full_compress(void)
 	printf("Running full_test_compression\n");
 
 	char *base_file = "Test/image_1.bmp";
-	char *compressed_file = "Test/image_1.bmp.compressed";
-	char *uncompressed_file = "Test/image_1_uncompressed.bmp";
+	char *compressed_file = "Test/image_1_copy.bmp.compressed";
 
 	huffman_code_t *codes = load_huffman_code_from_file("hackerman.codes");
 
 	printf("\n  Compressing file...\n");
-	compress_file(codes, base_file, compressed_file);
+	compress_file(codes, base_file);
+
+	printf("\n  Copying %s.compressed to %s\n", base_file, compressed_file);	
+	char command[1000];
+	sprintf(command, "cp %s.compressed %s", base_file, compressed_file);
+	system(command);
 
 	printf("\n  Decompressing file...\n");
-	decompress_file(codes, compressed_file, uncompressed_file);
+	decompress_file(codes, compressed_file);
 
 	printf("\n  Done!\n");
 	printf("\n");
