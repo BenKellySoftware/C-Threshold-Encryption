@@ -182,15 +182,14 @@ double algorithmn_decrypt(double input, double key) {/*input key and encrypted d
  * - Generated key
  *
 *******************************************************************************/
-char * generate_key(void)
+char *generate_key(void)
 {
-    char * key = (char*) malloc(3 * sizeof(char));
-    key[0] = (char) rand_int(1,255);
-    key[1] = (char) rand_int(1, 255);
-    key[2] = (char) rand_int(1, 255);
-    key[3] = (char)rand_int(1, 255);
-    key[4] = (char)rand_int(1, 255);
-    key[5] = (char)rand_int(1, 255);
+    char *key = (char*) malloc(sizeof(char) * (MASTER_KEY_LEN+1));
+    int i;
+    for (i = 0; i < MASTER_KEY_LEN; ++i)
+    {
+        key[i] = (char) rand_int(1,256);
+    }
     return key;
 }
 
@@ -209,7 +208,7 @@ char * generate_key(void)
  * - 0 if successful, otherwise 1
  *
  ******************************************************************************/
-int write_file(char* filename, char* data, long filesize) {
+int write_file(char *filename, char *data, long filesize) {
     int error = 0; /*boolean for error. if 0, all good. if 1, we have problems*/
     FILE* file;
     file = fopen(filename, "w");
@@ -255,7 +254,7 @@ int write_file(char* filename, char* data, long filesize) {
  * - returns 0 if successful, otherwise 1
  *
  ******************************************************************************/
-int read_file(char* filename, char* data, long* filesize)
+int read_file(char *filename, char *data, long *filesize)
 {
     int error = 0; /*boolean for error. if 0, all good. if 1, we have problems*/
     FILE* file; /*file stream*/
@@ -394,10 +393,14 @@ point_t pick_point(polynomial_t poly)
  * - A polynomial that all three points lay on
  *
 *******************************************************************************/
-polynomial_t find_polynomial(point_t p1, point_t p2, point_t p3) {
+polynomial_t find_polynomial(point_t p1, point_t p2, point_t p3)
+{
     polynomial_t poly;
 
-    poly.a = p1.y/((p1.x-p2.x)*(p1.x-p3.x)) + p2.y/((p2.x-p1.x)*(p2.x-p3.x)) + p3.y/((p3.x-p1.x)*(p3.x-p2.x));
+    poly.a = p1.y/((p1.x-p2.x)*(p1.x-p3.x))
+           + p2.y/((p2.x-p1.x)*(p2.x-p3.x))
+           + p3.y/((p3.x-p1.x)*(p3.x-p2.x));
+
     poly.b = -p1.y*(p2.x+p3.x)/((p1.x-p2.x)*(p1.x-p3.x))
              -p2.y*(p1.x+p3.x)/((p2.x-p1.x)*(p2.x-p3.x))
              -p3.y*(p1.x+p2.x)/((p3.x-p1.x)*(p3.x-p2.x));
@@ -423,7 +426,13 @@ polynomial_t find_polynomial(point_t p1, point_t p2, point_t p3) {
  * - Coefficients of p joined together as a key
  *
 *******************************************************************************/
-char *retrieve_key_from_polynomial(polynomial_t p) {
-    char *key_p = (char *)malloc(sizeof(char) * MASTER_KEY_LEN);
-    return key_p;
+char *retrieve_key_from_polynomial(polynomial_t poly) {
+    char *key = (char *)malloc(sizeof(char) * (MASTER_KEY_LEN + 1));
+    key[0] = (char) poly.a << 8;
+    key[1] = (char) poly.a & 0xff;
+    key[2] = (char) poly.b << 8;
+    key[3] = (char) poly.b & 0xff;
+    key[4] = (char) poly.c << 8;
+    key[5] = (char) poly.c & 0xff;
+    return key;
 }

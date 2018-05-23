@@ -1,11 +1,11 @@
 
 #ifndef STDIO_H
-#define STDIO_H value
+#define STDIO_H
 #include <stdio.h>
 #endif
 
 #ifndef STRING_H
-#define STRING_H value
+#define STRING_H
 #include <string.h>
 #endif
 

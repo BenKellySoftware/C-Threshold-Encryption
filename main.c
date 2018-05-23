@@ -28,7 +28,7 @@
 /* prototypes */
 int retrieve_recipe(char *filename, point_t a, point_t b, point_t c);
 int add_recipe(char *filename);
-int validPrintMenu(int choice);
+int valid_choice(int choice);
 
 
 /*******************************************************************************
@@ -50,6 +50,18 @@ int validPrintMenu(int choice);
 *******************************************************************************/
 int retrieve_recipe(char *filename, point_t a, point_t b, point_t c)
 {
+    if(DEBUG) {
+        printf("loading file\n");
+    }
+    loadfile()
+    if(DEBUG) {
+        printf("getting line\n");
+    }
+    getline(a,b,c)
+    if(DEBUG) {
+        printf("coefficients of line are %d %d %d\n", poly.a, poly.b, poly.c);
+    }
+    getkey(point)
     return 0;
 }
 
@@ -106,7 +118,7 @@ int main(int argc, char* argv[])
 			"Please enter a number that correlates with your choice above>\n");
 			scanf("%d", &choice);
 		} 
-		while(validPrintMenu(choice));
+		while(valid_choice(choice));
 	}
 	else /* arguements already entered */
 	{
@@ -138,6 +150,7 @@ int main(int argc, char* argv[])
 	return 0;
 }
 
+
 /*******************************************************************************
  * This function checks for valid choice choice from user. 
  *  
@@ -151,7 +164,7 @@ int main(int argc, char* argv[])
  * - 1 for valid
  * - 0 for invalid
 *******************************************************************************/
-int validPrintMenu(int choice)
+int valid_choice(int choice)
 {
     if (choice < 1 || choice > 2)
     {
