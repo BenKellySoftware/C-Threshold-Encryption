@@ -1,17 +1,7 @@
 
-#ifndef STDLIB_H
-#include <stdlib.h>
-#define STDLIB_H
-#endif
-
 #ifndef STDIO_H
 #include <stdio.h>
 #define STDIO_H
-#endif
-
-#ifndef MATH_H
-#include <math.h>
-#define MATH_H
 #endif
 
 #ifndef STRING_H
@@ -19,21 +9,14 @@
 #define STRING_H
 #endif
 
-#ifndef BYTECOUNT_H
-#include "bytecount.h"
-#define BYTECOUNT_H
-#endif
-
-#ifndef NODES_H
-#include "nodes.h"
-#define NODES_H
+#ifndef HUFFMAN_H
+#include "huffman.h"
+#define HUFFMAN_H
 #endif
 
 
 int main(int argc, char const *filenames[])
 {
-	printf("Generating a huffman code file\n");
-
 	/* check if any files */
 	if (argc <= 1)
 	{
@@ -41,15 +24,17 @@ int main(int argc, char const *filenames[])
 		exit(1);
 	}
 
+	printf("Generating a huffman code file\n");
 
 	/* file pointer to use */
 	FILE *file_p;
 
 
 	/* byte count array */
-	byte_counts_t probs = new_byte_prob();
+	byte_counts_t counts = new_byte_counts();
 
 
+	/* count the occurances of each byte in each file */
 	int i;
 	for (i = 1; i < argc; ++i)
 	{
@@ -62,11 +47,25 @@ int main(int argc, char const *filenames[])
 			exit(1);
 		}
 
-		get_byte_counts(&probs, file_p);
+		get_byte_counts(&counts, file_p);
 
-		display_byte_counts(probs);
+		display_byte_counts(counts);
 	}
 
-	/* code */
+	
+	node_list_t list = list_from_counts(counts);
+	sort_nodes(&list);
+
+	display_nodes(list);
+
+	node_t head = reduce_node_list(list);
+
+	huffman_code_t *codes = new_huffman_codes();
+	eval_code(codes, &head, "");
+
+	view_codes(codes);
+
+	write_huffman_code_to_file(codes, "hackerman.codes");
+
 	return 0;
 }

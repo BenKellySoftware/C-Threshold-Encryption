@@ -7,6 +7,11 @@
 #define STDIO_H
 #endif
 
+#ifndef STDLIB_H
+#include <stdlib.h>
+#define STDLIB_H
+#endif
+
 #ifndef RANDOM_H
 #include "random.h"
 #define RANDOM_H
@@ -22,6 +27,12 @@
 #define COMPRESSION_H
 #endif
 
+#ifndef HUFFMAN_H
+#include "huffman.h"
+#define HUFFMAN_H
+#endif
+
+
 /* prototypes */
 void test_random(void);
 void test_colour(void);
@@ -32,6 +43,8 @@ void test_compression(void);
 void test_compressed_file(void);
 void test_decompression(void);
 void test_full_compress(void);
+void test_node_linking(void);
+void test_huffman_code_generating(void);
 
 int main(void)
 {
@@ -44,8 +57,48 @@ int main(void)
 	/*test_compressed_file();*/
 	/*test_decompression();*/
 	test_full_compress();
+	/*test_node_linking();*/
+	/*test_huffman_code_generating();*/
 	
 	return 0;
+}
+
+
+node_list_t create_example_node_list(void)
+{
+	byte_counts_t counts = new_byte_counts();
+
+	counts.items[0].byte = 'a';
+	counts.items[1].byte = 'b';
+	counts.items[2].byte = 'c';
+	counts.items[3].byte = 'd';
+	counts.items[4].byte = 'e';
+	
+	counts.items[0].count = 1;
+	counts.items[1].count = 6;
+	counts.items[2].count = 15;
+	counts.items[3].count = 23;
+	counts.items[4].count = 9;
+
+	printf("making new nodes\n");
+	node_t n0 = new_node(counts.items[0]);
+	node_t n1 = new_node(counts.items[1]);
+	node_t n2 = new_node(counts.items[2]);
+	node_t n3 = new_node(counts.items[3]);
+	node_t n4 = new_node(counts.items[4]);
+
+	printf("creating list of nodes\n");
+	node_list_t nl;
+	nl.items = (node_t*)malloc(sizeof(node_t) * 9);
+	nl.count = 5;
+
+	nl.items[0] = n0;
+	nl.items[1] = n1;
+	nl.items[2] = n2;
+	nl.items[3] = n3;
+	nl.items[4] = n4;
+
+	return nl;
 }
 
 
@@ -131,6 +184,8 @@ void test_compress_char(void)
 {
 	printf("Running test_compress_char\n");
 
+	huffman_code_t *codes = load_huffman_code_from_file("hackerman.codes");
+
 	unsigned char file_text[7] = {0x20, 0xff, 0x00, 0xde, 0xad, 0xbe, 0xef};
 
 	int i;
@@ -139,7 +194,7 @@ void test_compress_char(void)
 		char *s = "";
 		printf("  Character compressing is %i\n", file_text[i]);
 
-		int success = char_to_code(file_text[i], &s);
+		int success = char_to_code(codes, file_text[i], &s);
 
 		printf("  Compressed is %s\n", s);
 		printf("  Was %sa success\n", success ? "not " : "");
@@ -158,7 +213,9 @@ void test_compression(void)
 	char *target_file = "Test/compress_this_file.txt";
 	char *destination_file = "Test/compress_this_file.bin";
 
-	int success = compress_file(target_file, destination_file);
+	huffman_code_t *codes = load_huffman_code_from_file("hackerman.codes");
+
+	int success = compress_file(codes, target_file, destination_file);
 	printf("Was %sa success\n", success ? "not " : "");
 
 	printf("\n");
@@ -172,7 +229,9 @@ void test_decompression(void)
 	char *target_file = "Test/compress_this_file.bin";
 	char *destination_file = "Test/decompress_this_file.txt";
 
-	int success = decompress_file(target_file, destination_file);
+	huffman_code_t *codes = load_huffman_code_from_file("hackerman.codes");
+
+	int success = decompress_file(codes, target_file, destination_file);
 	printf("Was %sa success\n", success ? "not " : "");
 
 	printf("\n");
@@ -214,12 +273,49 @@ void test_full_compress(void)
 	char *compressed_file = "Test/image_1.bmp.compressed";
 	char *uncompressed_file = "Test/image_1_uncompressed.bmp";
 
+	huffman_code_t *codes = load_huffman_code_from_file("hackerman.codes");
+
 	printf("\n  Compressing file...\n");
-	compress_file(base_file, compressed_file);
+	compress_file(codes, base_file, compressed_file);
 
 	printf("\n  Decompressing file...\n");
-	decompress_file(compressed_file, uncompressed_file);
+	decompress_file(codes, compressed_file, uncompressed_file);
 
 	printf("\n  Done!\n");
 	printf("\n");
+}
+
+
+void test_node_linking(void)
+{
+	printf("Running test_node_linking\n");
+
+	node_list_t nl = create_example_node_list();
+	sort_nodes(&nl);
+
+	printf("List of nodes before huffman blasting it\n");
+	display_nodes(nl);
+
+	node_t n = reduce_node_list(nl);
+	printf("Last node is...\n");
+
+	printf("Item 0 count is %d\n", get_node_count(&n));
+}
+
+
+void test_huffman_code_generating(void)
+{
+	node_list_t nl = create_example_node_list();
+	sort_nodes(&nl);
+
+	display_nodes(nl);
+
+	node_t n = reduce_node_list(nl);
+
+	printf("Item 0 count is %d\n", get_node_count(&n));
+
+	huffman_code_t *codes = new_huffman_codes();
+	eval_code(codes, &n, "");
+
+	view_codes(codes);
 }

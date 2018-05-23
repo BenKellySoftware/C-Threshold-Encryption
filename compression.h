@@ -195,6 +195,7 @@ int add_bit_char(bit_buffer_t *b, char c)
  * - Tom
  *
  * Inputs:
+ * - codes            : Huffman code file
  * - target_file      : The file to compress
  * - destination_file : The file to write to
  *
@@ -202,7 +203,7 @@ int add_bit_char(bit_buffer_t *b, char c)
  * - 0 if successful, otherwise 1
  *
  ******************************************************************************/
-int compress_file(char *target_file, char *destination_file)
+int compress_file(huffman_code_t *codes, char *target_file, char *destination_file)
 {
     /* open the file */
     FILE *target_p = fopen(target_file, "rb");
@@ -244,7 +245,7 @@ int compress_file(char *target_file, char *destination_file)
         c = getc(target_p);
 
         /* for each character, look up what the compressed bit string is */
-        char_to_code(c, &bit_string);
+        char_to_code(codes, c, &bit_string);
 
         /* have a count. for each bit we read, increment it by one */
         for (count = 0; count < strlen(bit_string); ++count)
@@ -293,7 +294,7 @@ int compress_file(char *target_file, char *destination_file)
  * - 0 if successful, otherwise 1
  *
  ******************************************************************************/
-int decompress_file(char *target_file, char *destination_file)
+int decompress_file(huffman_code_t *codes, char *target_file, char *destination_file)
 {
     /* open the files */
     FILE *target_p = fopen(target_file, "rb");
@@ -312,7 +313,7 @@ int decompress_file(char *target_file, char *destination_file)
     int bytes_written = 0;
 
     /* string of bits */
-    char bit_string[LONGEST_CODE+1] = "";
+    char bit_string[256] = "";
     char write_byte;
 
     /* bit buffer to use */
@@ -347,7 +348,7 @@ int decompress_file(char *target_file, char *destination_file)
             );
 
             /* if we found a code */
-            if (code_to_char(&write_byte, bit_string) == 0)
+            if (code_to_char(codes, &write_byte, bit_string) == 0)
             {
                 /* write that decoded char to file */
                 fwrite(&write_byte, 1, 1, destination_p);
