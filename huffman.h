@@ -15,6 +15,7 @@
 #endif
 
 
+
 typedef struct huffman_code {
 	unsigned char symbol;
 	char code[256];
@@ -30,20 +31,18 @@ typedef struct byte_counts {
 	int total_byte_count;
 } byte_counts_t;
 
-struct node {
+typedef struct node {
 	int is_leaf;
 
 	struct node *node1;
 	struct node *node2;
 	byte_count_obj_t value;
-};
-typedef struct node node_t;
+} node_t;
 
 typedef struct node_list {
 	int count;
 	node_t *items;
 } node_list_t;
-
 
 
 
@@ -158,7 +157,12 @@ void get_byte_counts(byte_counts_t *counts, FILE *file_p)
 	rewind(file_p);
 
 	counts->total_byte_count += filesize;
-	printf("total filesize is %d\n", counts->total_byte_count);
+
+	/* show the filesize if debug mode is on */
+	#if DEBUG & LOG_LEVEL >= 1
+		printf("  Total filesize is %d\n", counts->total_byte_count);
+		printf("\n");
+	#endif
 
 	/* count them */
 	int j;
@@ -404,8 +408,6 @@ void eval_code(huffman_code_t *codes, node_t *node, char prefix[256])
 
 		/* copy the code to codes */
 		strcpy(codes[node->value.byte].code, prefix);
-
-		printf("Set the code for 0x%02x as %s\n", node->value.byte, prefix);
 	}
 	else
 	{
@@ -504,7 +506,7 @@ huffman_code_t *load_huffman_code_from_file(char *filename)
 
 
 
-
+#if DEBUG
 /*******************************************************************************
  * Displays all the counts of bytes in a byte_count object
  *
@@ -523,7 +525,7 @@ void display_byte_counts(byte_counts_t byte_counts)
 	int i;
 	for (i = 0; i < 256; ++i)
 	{
-		printf("%02x | %d\n", 
+		printf("    %02x | %d\n", 
 			byte_counts.items[i].byte,
 			byte_counts.items[i].count);
 	}
@@ -549,15 +551,14 @@ void display_nodes(node_list_t list)
 	for (i = 0; i < list.count; ++i)
 	{
 		if (list.items[i].is_leaf)
-			printf("Item 0x%02x count is %d\n",
+			printf("  Item 0x%02x count is %d\n",
 					list.items[i].value.byte,
 					get_node_count(&list.items[i]));
 		else
-			printf("Item ?%d? count is %d\n",
+			printf("  Item ?%d? count is %d\n",
 					i,
 					get_node_count(&list.items[i]));
 	}
-	printf("\n");
 }
 
 
@@ -574,14 +575,15 @@ void display_nodes(node_list_t list)
  * - None
  *
 *******************************************************************************/
-void view_codes(huffman_code_t *codes)
+void display_codes(huffman_code_t *codes)
 {
 	int i;
 	for (i = 0; i < 256; ++i)
 	{
-		printf("0x%02x | %s\n", codes[i].symbol, codes[i].code);
+		printf("  0x%02x | %s\n", codes[i].symbol, codes[i].code);
 	}
 }
+#endif
 
 
 
@@ -618,24 +620,6 @@ int char_to_code(huffman_code_t *codes, unsigned int c, char **s)
 	}
 
 	return 1;
-
-
-
-	switch(c)
-	{
-		case 0x00:
-			*s = "11";
-			return 0;
-		case 0x01:
-			*s = "1011011";
-			return 0;
-		/*...*/
-		case 0xff:
-			*s = "0";
-			return 0;
-		default:
-			return 1;
-	}
 }
 
 
@@ -667,24 +651,4 @@ int code_to_char(huffman_code_t *codes, char *c, char *s)
 	}
 
 	return 1;
-
-
-
-	if (strcmp(s, "11") == 0)
-	{
-		*c = 0x00;
-		return 0;
-	}
-	else if (strcmp(s, "1011011") == 0)
-	{
-		*c = 0x01;
-		return 0;
-	}
-	else if (strcmp(s, "0") == 0)
-	{
-		*c = 0xff;
-		return 0;
-	}
-	else
-		return 1;
 }
