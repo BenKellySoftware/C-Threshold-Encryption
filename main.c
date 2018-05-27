@@ -50,6 +50,17 @@ int validPrintMenu(int choice);
 *******************************************************************************/
 int retrieve_recipe(char *filename, point_t a, point_t b, point_t c)
 {
+    printf("Please enter at lease 3 key codes to decrypt\n")
+    printf("code 1>>");
+    scanf("%s\n", &a1);
+    printf("code 2>>");
+    scanf("%s\n", &b2);
+    printf("code 3>>");
+    scanf("%s\n", &c3);
+    printf("Thank you!")
+
+    if ( a == a1 && b =b2 && c =c3)
+
     FILE * fPointer;
     fPointer = fopen("smile.png", "wb"); 
 
@@ -73,7 +84,6 @@ int retrieve_recipe(char *filename, point_t a, point_t b, point_t c)
     fclose(file_p);
 
     return 0; 
-
 
 }
 
