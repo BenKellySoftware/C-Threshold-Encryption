@@ -25,6 +25,9 @@
 #endif
 
 
+#define HUFFMAN_CODE_FILE "hackerman.codes"
+
+
 /* prototypes */
 int retrieve_recipe(char *filename, point_t a, point_t b, point_t c);
 int add_recipe(char *filename);
@@ -51,9 +54,12 @@ int validPrintMenu(int choice);
 int retrieve_recipe(char *filename, point_t a, point_t b, point_t c)
 {
 	int error = 0; /*boolean for error. if 0, all good. if 1, we have problems*/
+
+	huffman_code_t *codes = load_huffman_code_from_file(HUFFMAN_CODE_FILE);
+
 	
 	/*******************************DECOMPRESSION******************************/
-	error = decompress_file(new_huffman_codes(), filename);
+	error = decompress_file(codes, filename);
 	if (error == 1)
 	{
 		/*TODO: debug message here*/
@@ -73,8 +79,8 @@ int retrieve_recipe(char *filename, point_t a, point_t b, point_t c)
 		*filesize_encrypt = ftell(file_encrypt);
 		rewind(file_encrypt);
 		
-		data_encrypt = (char*)realloc((*filesize_encrypt) * sizeof(char));
-		char * file_encrypt_tempbuffer = (char*)malloc(sizeof(char)*(*filesize)); /*allocate memory to contain the file*/
+		data_encrypt = (char*)realloc(data_encrypt, (*filesize_encrypt) * sizeof(char));
+		char * file_encrypt_tempbuffer = (char*)malloc(sizeof(char)*(*filesize_encrypt)); /*allocate memory to contain the file*/
 
 		long fread_result = fread(file_encrypt_tempbuffer, 1, *filesize, file); /*store WHOLE FILE in file_buffer*/
 		if (fread_result != *filesize) { /*if buffer is, for whatever reason, a different size to what we anticipated*/
@@ -331,6 +337,7 @@ int main(int argc, char* argv[])
 	}
 	return 0;
 }
+
 
 /*******************************************************************************
  * This function checks for valid choice choice from user. 

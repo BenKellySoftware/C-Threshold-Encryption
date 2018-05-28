@@ -50,14 +50,7 @@ int validPrintMenu(int choice);
 *******************************************************************************/
 int retrieve_recipe(char *filename, point_t a, point_t b, point_t c)
 {
-    printf("Please enter at lease 3 key codes to decrypt\n")
-    printf("code 1>>");
-    scanf("%s\n", &a1);
-    printf("code 2>>");
-    scanf("%s\n", &b2);
-    printf("code 3>>");
-    scanf("%s\n", &c3);
-    printf("Thank you!");
+
 
     if ( a == a1 && b =b2 && c =c3)
     /*THis part is not finished, im just a little confused about what i do 
@@ -140,7 +133,7 @@ int add_recipe(char *filename)
     fclose(fPointer);
     fclose(encrypted_p);
 
-    return 0; 
+
 	/* run the compression here */
 
 
@@ -148,7 +141,6 @@ int add_recipe(char *filename)
 
 
     return 0;
-
 }
 
 
@@ -172,51 +164,6 @@ int add_recipe(char *filename)
 *******************************************************************************/
 int main(int argc, char* argv[])
 {
-<<<<<<< HEAD
-    int choice;       
-
-    colour_printf("blue", "Welcome to the Bepis Gola Database\n");
-    if (argc <= 1) /* no arguement entered- therefore use scanf */
-    {
-        do
-        {       
-            printf("\n"
-            "1. add a recipe\n"
-            "2. view the recipe\n"
-            "Please enter a number that correlates with your choice above>\n");
-            scanf("%d", &choice);
-        } 
-        while(validPrintMenu(choice));
-    }
-    else /* arguements already entered */
-    {
-        if (strcmp(argv[1], "-a") == 0)
-        {
-            choice = 1;
-        }
-        else if (strcmp(argv[1], "-v") == 0)
-        {
-            choice = 2;
-        }
-        else 
-        {
-            printf("There is no mode for the arguement you have entered.\n");
-            return 1;
-        }
-    }
-
-    if (choice == 1)
-    {
-        printf("You have chosen to add a recipe.\n");
-        add_recipe(*filename);
-    }
-    if (choice == 2)
-    {
-        printf("You have chosen to view the recipe.\n");
-        retrieve_recipe(*filename, a, b, c);
-    }
-    return 0;
-=======
 	int choice;		  
 
 	colour_printf("blue", "Welcome to the Bepis Gola Database\n");
@@ -235,9 +182,13 @@ int main(int argc, char* argv[])
 	else /* arguements already entered */
 	{
 		/* check if argv[1] is "-h" */
-		/* if it is, display the help */
+		if (strcmp(argv[1], "-h") == 0)
+		{
+			/* TODO: display help */
 
-		if (strcmp(argv[1], "-a") == 0)
+			exit(1);
+		}
+		else if (strcmp(argv[1], "-a") == 0)
 		{
 			/* check if argc == 4, ie they entered ./main.out -a target_file */
 
@@ -260,9 +211,6 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	
-
-
 	if (choice == 1)
 	{
 		/* remove this once target_file and or points are gotten from user input or arguments */
@@ -283,8 +231,8 @@ int main(int argc, char* argv[])
 		retrieve_recipe(filename, a, b, c);
 	}
 	return 0;
->>>>>>> cbb190a6b059634803f10e94d1d85db54242587c
 }
+
 
 /*******************************************************************************
  * This function checks for valid choice choice from user. 
@@ -307,4 +255,34 @@ int validPrintMenu(int choice)
         return 0;
     } 
     return 1;
+}
+
+
+/*******************************************************************************
+ * Asks for three points
+ *
+ * Author:
+ * - author_name
+ *
+ * Inputs:
+ * - a : The first point
+ * - b : The second point
+ * - c : The third point
+ *
+ * Outputs:
+ * - 1 for valid
+ * - 0 for invalid
+ *
+*******************************************************************************/
+int getPoints(point_t *a, point_t *b, point_t *c)
+{
+	
+	printf("Please enter at lease 3 key codes to decrypt\n")
+    printf("code 1>>");
+    scanf("%s\n", &a1);
+    printf("code 2>>");
+    scanf("%s\n", &b2);
+    printf("code 3>>");
+    scanf("%s\n", &c3);
+    printf("Thank you!");
 }

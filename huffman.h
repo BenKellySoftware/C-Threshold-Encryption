@@ -15,6 +15,10 @@
 #endif
 
 
+#ifndef DEBUG
+#define DEBUG 1
+#endif
+
 
 typedef struct huffman_code {
 	unsigned char symbol;

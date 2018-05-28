@@ -14,8 +14,6 @@
 #define HELPERS_H
 #endif
 
-#define COMPRESSED_EXTENSION ".compressed"
-
 
 typedef struct bit_buffer {
     int seek;
@@ -196,8 +194,7 @@ int add_bit_char(bit_buffer_t *b, char c)
 
 
 /*******************************************************************************
- * Compresses a file such that it takes up less space on disc. Adds
- * COMPRESSED_EXTENSION onto the filename
+ * Compresses a file such that it takes up less space on disc.
  *
  * Author: 
  * - Tom
@@ -212,23 +209,19 @@ int add_bit_char(bit_buffer_t *b, char c)
  ******************************************************************************/
 int compress_file(huffman_code_t *codes, char *target_file)
 {
-    char *destination_file = (char*)malloc(strlen(target_file)+strlen(COMPRESSED_EXTENSION));
-    strcpy(destination_file, target_file);
-    strcat(destination_file, COMPRESSED_EXTENSION);
+    FILE *target_p;
 
     /* open the file */
-    FILE *target_p = fopen(target_file, "rb");
+    target_p = fopen(target_file, "rb");
     if (target_p == NULL)
     {
         fprintf(stderr, "Error opening target file\n");
         exit(1);
     }
-    FILE *destination_p = fopen(destination_file, "wb");
-    if (destination_p == NULL)
-    {
-        fprintf(stderr, "Error opening destination file\n");
-        exit(2);
-    }
+
+    /* string and string length */
+    int compressed_text_size = 2;
+    char *compressed_text = (char *)malloc(compressed_text_size);
 
     int bytes_written = 0;
 
@@ -264,11 +257,26 @@ int compress_file(huffman_code_t *codes, char *target_file)
             /* move the bits into a bit buffer */
             if (add_bit_char(&buffer, bit_string[count]) == 1)
             {
-                /* when the size of the bit buffer is 8, write that byte to a file */
-                write_byte = buffer_to_char(buffer);
+                /* if the buffer needs to be resized */
+                if (bytes_written >= compressed_text_size)
+                {
+                    int new_size = compressed_text_size * 2;
 
-                fwrite(&write_byte, 1, 1, destination_p);
-                ++bytes_written;
+                    char *new_p = realloc(compressed_text, new_size);
+                    if (new_p == NULL)
+                    {
+                        printf("Ran out of memory\n");
+                        exit(1);
+                    }
+                    else
+                        compressed_text = new_p;
+
+                    compressed_text_size = new_size;
+                }
+
+                /* when the size of the bit buffer is 8, write that byte to the buffer */
+                write_byte = buffer_to_char(buffer);
+                compressed_text[bytes_written++] = write_byte;
 
                 /* empty the bit buffer */
                 clear_buffer(&buffer);
@@ -276,23 +284,54 @@ int compress_file(huffman_code_t *codes, char *target_file)
         }
     }
 
-    /* write the left over bits to file */
+    /* if the buffer needs to be resized */
+    if (bytes_written >= compressed_text_size)
+    {
+        int new_size = compressed_text_size * 2;
+
+        char *new_p = realloc(compressed_text, new_size);
+        if (new_p == NULL)
+        {
+            printf("Ran out of memory\n");
+            exit(1);
+        }
+        else
+            compressed_text = new_p;
+
+        compressed_text_size = new_size;
+    }
+    
+    /* write the left over bits to the buffer */
     write_byte = buffer_to_char(buffer);
-    fwrite(&write_byte, 1, 1, destination_p);
-    ++bytes_written;
+    compressed_text[bytes_written++] = write_byte;
 
     printf("  Compressed file size is %d bytes\n", bytes_written);
 
-    /* close the files */
+    /* close the file being read */
     fclose(target_p);
-    fclose(destination_p);
+
+    /* reopen for write */
+    target_p = fopen(target_file, "wb");
+    if (target_p == NULL)
+    {
+        fprintf(stderr, "Error opening target file\n");
+        exit(1);
+    }
+
+    /* write the bytes to target file */
+    fwrite(compressed_text, bytes_written, 1, target_p);
+
+    /* close the file again */
+    fclose(target_p);
+
+    free(compressed_text);
 
     return 0;
 }
 
 
 /*******************************************************************************
- * Decompresses a file. Strips COMPRESSED_EXTENSION from the filename
+ * Decompresses a file.
  *
  * Author: 
  * - Tom
@@ -307,23 +346,19 @@ int compress_file(huffman_code_t *codes, char *target_file)
  ******************************************************************************/
 int decompress_file(huffman_code_t *codes, char *target_file)
 {
-    char *destination_file = (char*)malloc(strlen(target_file));
-    strcpy(destination_file, target_file);
-    replace_in_string(&destination_file, COMPRESSED_EXTENSION, "");
+    FILE *target_p;
 
     /* open the files */
-    FILE *target_p = fopen(target_file, "rb");
+    target_p = fopen(target_file, "rb");
     if (target_p == NULL)
     {
         fprintf(stderr, "Error opening target file\n");
         exit(1);
     }
-    FILE *destination_p = fopen(destination_file, "wb");
-    if (destination_p == NULL)
-    {
-        fprintf(stderr, "Error opening destination file\n");
-        exit(2);
-    }
+
+    /* string and string length */
+    int decompressed_text_size = 8;
+    char *decompressed_text = (char *)malloc(decompressed_text_size);
 
     int bytes_written = 0;
 
@@ -365,9 +400,27 @@ int decompress_file(huffman_code_t *codes, char *target_file)
             /* if we found a code */
             if (code_to_char(codes, &write_byte, bit_string) == 0)
             {
-                /* write that decoded char to file */
-                fwrite(&write_byte, 1, 1, destination_p);
-                ++bytes_written;
+                /* if the buffer needs to be resized */
+                if (bytes_written + 1 >= decompressed_text_size)
+                {
+                    int new_size = decompressed_text_size * 2;
+
+                    char *new_p = realloc(decompressed_text, new_size);
+                    if (new_p == NULL)
+                    {
+                        printf("Ran out of memory\n");
+                        exit(1);
+                    }
+                    else
+                    {
+                        decompressed_text = new_p;
+                    }
+
+                    decompressed_text_size = new_size;
+                }
+
+                /* write to the buffer */
+                decompressed_text[bytes_written++] = write_byte;
 
                 /* clear the bitstring */
                 strcpy(bit_string, "");
@@ -379,7 +432,22 @@ int decompress_file(huffman_code_t *codes, char *target_file)
 
     /* close the files */
     fclose(target_p);
-    fclose(destination_p);
+
+    /* reopen for write */
+    target_p = fopen(target_file, "wb");
+    if (target_p == NULL)
+    {
+        fprintf(stderr, "Error opening target file\n");
+        exit(1);
+    }
+
+    /* write the bytes to target file */
+    fwrite(decompressed_text, bytes_written, 1, target_p);
+
+    /* close the file again */
+    fclose(target_p);
+
+    free(decompressed_text);
 
     return 0;
 }

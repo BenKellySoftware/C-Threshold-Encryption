@@ -32,6 +32,13 @@
 #define HUFFMAN_H
 #endif
 
+#ifndef CRYPTO_H
+#include "crypto.h"
+#define CRYPTO_H
+#endif
+
+#define DEBUG 1
+
 
 /* prototypes */
 void test_random(void);
@@ -45,6 +52,14 @@ void test_decompression(void);
 void test_full_compress(void);
 void test_node_linking(void);
 void test_huffman_code_generating(void);
+void test_encrypt_text(void);
+void test_decrypt_text(void);
+void test_crypto_file(void);
+void test_polynomials(void);
+void test_pick_point(void);
+void test_full_key_gen(void);
+void test_get_key_from_poly(void);
+
 
 int main(void)
 {
@@ -56,9 +71,16 @@ int main(void)
 	/*test_compression();*/
 	/*test_compressed_file();*/
 	/*test_decompression();*/
-	test_full_compress();
+	/*test_full_compress();*/
 	/*test_node_linking();*/
 	/*test_huffman_code_generating();*/
+	/*test_encrypt_text();*/
+	/*test_decrypt_text();*/
+	/*test_crypto_file();*/
+	test_polynomials();
+	test_pick_point();
+	test_full_key_gen();
+	test_get_key_from_poly();
 	
 	return 0;
 }
@@ -99,6 +121,21 @@ node_list_t create_example_node_list(void)
 	nl.items[4] = n4;
 
 	return nl;
+}
+
+
+void display_key(unsigned char *key)
+{
+	int i;
+	printf("Key is 0x");
+	for (i = 0; i < 6; ++i)
+	{
+		if (key[i] < 0)
+			printf("%02x ", 256+key[i]);
+		else
+			printf("%02x ", key[i]);
+	}
+	printf("\n");
 }
 
 
@@ -225,7 +262,7 @@ void test_decompression(void)
 {
 	printf("Running test_decompression\n");
 
-	char *target_file = "Test/decompress_this_file.txt.compressed";
+	char *target_file = "Test/decompress_this_file.txt";
 
 	huffman_code_t *codes = load_huffman_code_from_file("hackerman.codes");
 
@@ -268,20 +305,30 @@ void test_full_compress(void)
 	printf("Running full_test_compression\n");
 
 	char *base_file = "Test/image_1.bmp";
-	char *compressed_file = "Test/image_1_copy.bmp.compressed";
+	char *compress_this = "Test/image_1_compressed.bmp";
+	char *decompress_this = "Test/image_1_decompressed.bmp";
 
 	huffman_code_t *codes = load_huffman_code_from_file("hackerman.codes");
 
-	printf("\n  Compressing file...\n");
-	compress_file(codes, base_file);
 
-	printf("\n  Copying %s.compressed to %s\n", base_file, compressed_file);	
-	char command[1000];
-	sprintf(command, "cp %s.compressed %s", base_file, compressed_file);
-	system(command);
+	printf("\n  Copying %s to %s\n", base_file, compress_this);	
+	char command_1[1000];
+	sprintf(command_1, "cp %s %s", base_file, compress_this);
+	system(command_1);
+
+	
+	printf("\n  Compressing file...\n");
+	compress_file(codes, compress_this);
+
+
+	printf("\n  Copying %s to %s\n", compress_this, decompress_this);	
+	char command_2[1000];
+	sprintf(command_2, "cp %s %s", compress_this, decompress_this);
+	system(command_2);
+
 
 	printf("\n  Decompressing file...\n");
-	decompress_file(codes, compressed_file);
+	decompress_file(codes, decompress_this);
 
 	printf("\n  Done!\n");
 	printf("\n");
@@ -302,11 +349,15 @@ void test_node_linking(void)
 	printf("Last node is...\n");
 
 	printf("Item 0 count is %d\n", get_node_count(&n));
+
+	printf("\n");
 }
 
 
 void test_huffman_code_generating(void)
 {
+	printf("Running test_huffman_code_generating\n");
+
 	node_list_t nl = create_example_node_list();
 	sort_nodes(&nl);
 
@@ -319,5 +370,217 @@ void test_huffman_code_generating(void)
 	huffman_code_t *codes = new_huffman_codes();
 	eval_code(codes, &n, "");
 
-	view_codes(codes);
+	display_codes(codes);
+
+	printf("\n");
+}
+
+
+void test_encrypt_text(void)
+{
+	printf("Running test_encrypt_text\n");
+
+	/*char *plaintext = "Hello, world!";*/
+	char plaintext[6] = {0xde, 0xad, 0xbe, 0xef, 0x00, 0xff};
+	int data_len = 6;
+
+	/* init rand */
+	int seed = 12345;
+	init_rand(seed);
+
+	/* generate key ? */
+	unsigned char *key = generate_key();
+
+	display_key(key);
+
+	/* spoof data to encrypt? */
+	char *cyphertext = encrypt_data(key, plaintext, data_len);
+
+	printf("plain: %s\n", plaintext);
+	printf("crypt: %s\n", cyphertext);
+
+	printf("\n");
+}
+
+
+void test_decrypt_text(void)
+{
+	printf("Running test_decrypt_text\n");
+
+	char test_text[6] = {0xde, 0xad, 0xbe, 0xef, 0x00, 0xff};
+	int data_len = 6;
+
+	/* init rand */
+	int seed = 54321;
+	init_rand(seed);
+
+	/* generate key ? */
+	unsigned char *key = generate_key();
+
+	display_key(key);
+
+	char *cyphertext = encrypt_data(key, test_text, data_len);
+
+	char *plaintext = encrypt_data(key, cyphertext, data_len);
+
+	printf("crypt: %s\n", cyphertext);
+	printf("plain: %s\n", plaintext);
+
+	printf("\n");
+}
+
+
+void test_crypto_file(void)
+{
+	printf("Running test_crypto_file\n");
+
+	int seed = 1337;
+	init_rand(seed);
+
+	/* generate key ? */
+	unsigned char *key = generate_key();
+
+	display_key(key);
+
+	char *base_file = "Test/image_2.bmp";
+	char *encrypt_this = "Test/image_2_encrypted.bmp";
+	char *decrypt_this = "Test/image_2_decrypted.bmp";
+
+
+	printf("\n  Copying %s to %s\n", base_file, encrypt_this);	
+	char command_1[1000];
+	sprintf(command_1, "cp %s %s", base_file, encrypt_this);
+	system(command_1);
+
+	
+	printf("\n  Compressing file...\n");
+	encrypt_file(key, encrypt_this);
+
+
+	printf("\n  Copying %s to %s\n", encrypt_this, decrypt_this);	
+	char command_2[1000];
+	sprintf(command_2, "cp %s %s", encrypt_this, decrypt_this);
+	system(command_2);
+
+
+	printf("\n  Decompressing file...\n");
+	decrypt_file(key, decrypt_this);
+
+	printf("\n  Done!\n");
+	printf("\n");
+}
+
+
+void test_polynomials(void)
+{
+	printf("Running test_polynomials\n");
+
+	int seed = 739;
+	init_rand(seed);
+
+	unsigned char *key = generate_key();
+
+	display_key(key);
+
+	polynomial_t poly = create_polynomial_from_key(key);
+
+	printf("a is 0x%x\n", poly.a);
+	printf("b is 0x%x\n", poly.b);
+	printf("c is 0x%x\n", poly.c);
+
+	printf("\n");
+}
+
+
+void test_pick_point(void)
+{
+	printf("Running test_pick_point\n");
+
+	printf("polynomial is 4x^2 + 3x + 57\n");
+
+	/* x = 8 */
+	point_t p1;
+	p1.x = 8;
+	p1.y = 4*8*8 + 3*8 + 57;
+
+	/* x = 3 */
+	point_t p2;
+	p2.x = 3;
+	p2.y = 4*3*3 + 3*3 + 57;
+
+	/* x = 10 */
+	point_t p3;
+	p3.x = 10;
+	p3.y = 4*10*10 + 3*10 + 57;
+
+
+	printf("p1 is (%lf, %lf)\n", p1.x, p1.y);
+	printf("p2 is (%lf, %lf)\n", p2.x, p2.y);
+	printf("p3 is (%lf, %lf)\n", p3.x, p3.y);
+	
+
+	polynomial_t poly = find_polynomial(p1, p2, p3);
+
+	printf("A is %d\n", poly.a);
+	printf("B is %d\n", poly.b);
+	printf("C is %d\n", poly.c);
+
+	printf("\n");
+}
+
+
+void test_full_key_gen(void)
+{
+	printf("Running test_full_key_gen\n");
+
+	int seed = 75843;
+	init_rand(seed);
+
+	unsigned char *key = generate_key();
+	display_key(key);
+
+
+	polynomial_t poly = create_polynomial_from_key(key);
+	printf("A is %d\n", poly.a);
+	printf("B is %d\n", poly.b);
+	printf("C is %d\n", poly.c);
+
+
+	point_t p1 = pick_point(poly);
+	point_t p2 = pick_point(poly);
+	point_t p3 = pick_point(poly);
+	printf("p1 is (%lf, %lf)\n", p1.x, p1.y);
+	printf("p2 is (%lf, %lf)\n", p2.x, p2.y);
+	printf("p3 is (%lf, %lf)\n", p3.x, p3.y);
+	
+
+	polynomial_t poly_2 = find_polynomial(p1, p2, p3);
+
+	printf("A is %d\n", poly_2.a);
+	printf("B is %d\n", poly_2.b);
+	printf("C is %d\n", poly_2.c);
+
+	printf("\n");
+}
+
+
+void test_get_key_from_poly(void)
+{
+	printf("Running test_get_key_from_poly\n");
+
+	int seed = 739;
+	init_rand(seed);
+
+	unsigned char *key = generate_key();
+	display_key(key);
+
+	polynomial_t poly = create_polynomial_from_key(key);
+	printf("A is 0x%x\n", poly.a);
+	printf("B is 0x%x\n", poly.b);
+	printf("C is 0x%x\n", poly.c);
+
+	unsigned char *got_key = retrieve_key_from_polynomial(poly);
+	display_key(got_key);
+
+	printf("\n");
 }

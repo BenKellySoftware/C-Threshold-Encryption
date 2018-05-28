@@ -20,27 +20,17 @@
 #define POINT_X_MAX 100
 #define MASTER_KEY_LEN 6
 
+
 /* structure for holding the coefficients of polynomial */
 typedef struct polynomial {
-    int a, b, c;
+	int a, b, c;
 } polynomial_t;
 
 
 /* structure for a point on a polynomial */
 typedef struct point {
-    int x, y;
+    double x, y;
 } point_t;
-
-
-/* prototypes */
-
-/*I don't think I need these, but I if it turns out I do, I'll uncomment it*/
-/*char * generate_key(void);
-int find_file_size(char* filename, long* filesize);
-int read_file(char* filename, char* data, long* filesize);
-double algorithmn_encrypt(double input, double key);
-double algorithmn_decrypt(double input, double key);
-int write_file(char* filename, char* data, long filesize);*/
 
 
 /*******************************************************************************
@@ -56,118 +46,216 @@ int write_file(char* filename, char* data, long filesize);*/
  * - Generated key
  *
 *******************************************************************************/
-char * generate_key(void)
+unsigned char * generate_key(void)
 {
-    char * key = (char*) malloc(MASTER_KEY_LEN * sizeof(char));
+    unsigned char *key = (unsigned char *)malloc(MASTER_KEY_LEN);
+
 	int i;
 	for (i = 0; i < MASTER_KEY_LEN; i++)
 	{
-		key[i] = (char)rand_int(1, 255);
+		key[i] = rand_int(1, 255);
 	}
+
     return key;
-};
+}
 
 
 /*******************************************************************************
- * Simple equations to manipulate data in order to encrypt.
- *
- * The specific mathematical equation being used here is definetely up
- * for debate.
+ * Encrypts a string with a key using XOR
  *
  * Author:
- * - Jack
- *
-*******************************************************************************/
-double algorithmn_encrypt(double input, double key) {/*input key and clean data, output encrypted data*/
-    return pow(input, key);
-};
-
-double algorithmn_decrypt(double input, double key) {/*input key and encrypted data, output clean data*/
-    return pow(input, (1/key));
-};
-
-
-/*******************************************************************************
- * Encrypts a file with a key using division/ modulus, as well as XORing the
- * keys.
- *
- * Author:
- * - Jack
+ * - author_name
  *
  * Inputs:
- * - clean data: data that needs to be encrypted
- * - data size: size of data (file) in bytes
+ * - key       : key
+ * - plaintext : unencrypted data
+ * - data_len  : length of data
  *
  * Outputs:
- * - returns 0 if successful, otherwise 1
- * - key : Key used to encrypt file (given as a pointer)
- * - encrypted data (pointer)
+ * - pointer to cyphertext
  *
 *******************************************************************************/
-int encrypt_file(char* data_clean, char* key, long data_size, char* data_encrypt) {
-	int error = 0; /*boolean for error. if 0, all good. if 1, we have problems*/
+char * encrypt_data(unsigned char *key, char *plaintext, int data_len)
+{
+	/*allocate space for the ENCRYPTED data*/
+	char *cyphertext = (char *)malloc(data_len);
 
-	char * key_rand = generate_key(); /*this is the random key, which is the first half of the full key*/
-	/*we must make  decimal version of this, you'll see why in a minute*/
-	long key_rand_no = (int)key_rand[0] + (pow(10,3) * (int) key_rand[1]) + (pow(10,6) * (int) key_rand[2]);
-	key_rand_no = key_rand_no + (pow(10, 9) * (int)key_rand[3] + pow(10, 12) * (int)key_rand[4] + pow(10, 12) * (int)key_rand[5]);
-
-	/*ENCRYPTION STUFF HERE*/
-	char* data_encrypted = (char*) malloc(data_size * sizeof(char)); /*alliocate space for the ENCRYPTED data*/
+	int index_of_key = 0;
 
 	int i;
-	for (i = 0; i < data_size; i++) {
-		data_encrypted[i] = (char) algorithmn_encrypt((double) data_clean[i], key_rand_no);
+	for (i = 0; i < data_len; ++i)
+	{
+		/* xor char of plaintext with char of key */
+		cyphertext[i] = (char)(plaintext[i] ^ key[index_of_key++]);
+		/*cyphertext[i] = (char)(plaintext[i] ^ '\0');*/
+
+		/* if we reached the end of the key, go back to the start */
+		if (index_of_key == MASTER_KEY_LEN)
+			index_of_key = 0;
 	}
 
-	if (error == 0) {/*if we have no errors so far, we know it is safe to return the data*/
-		*key = *key_rand;/*give back the key*/
-		/*give back encrypted data*/
-		*data_encrypt = *data_encrypted; /*we pass the values instead of locations, so we can free local storage without troubles*/
-	}
-	free(data_encrypted);
-	free(key_rand);
-
-	return error;
-};
+	return cyphertext;
+}
 
 
 /*******************************************************************************
- * Decrypts a file with its key using XORing the key, then multiplying with
- * remainder.
+ * Decrypts a string with a key using XOR
  *
  * Author:
- * - Jack
+ * - author_name
  *
  * Inputs:
- * - filename : Path to file to decrypt
- * - key      : Key used to decrypt the file
+ * - key        : key
+ * - cyphertext : encrypted data
+ * - data_len   : length of data
  *
  * Outputs:
- * - 0 if successful, otherwise 1
- * - clean (unencrypted) data (as a pointer)
+ * - pointer to plaintext
  *
 *******************************************************************************/
-int decrypt_file(char* data_encrypted, char* key, long data_size, char* data_cln) {
-	int error = 0; /*boolean for error. if 0, all good. if 1, we have problems*/
+char * decrypt_data(unsigned char *key, char *cyphertext, int data_len)
+{
+	/*allocate space for the ENCRYPTED data*/
+	char *plaintext = (char *)malloc(data_len);
 
-	/*we must make  decimal version of the key, you'll see why in a minute*/
-	long key_no = (int)key[0] + (pow(10, 3) * (int)key[1]) + (pow(10, 6) * (int)key[2]);
-	key_no = key_no + (pow(10, 9) * (int)key[3] + pow(10, 12) * (int)key[4] + pow(10, 12) * (int)key[5]);
-
-	char* data_clean = (char*)malloc((data_size) * sizeof(char)); /*alliocate space for the unenccrypted (clean) data*/
+	int index_of_key = 0;
 
 	int i;
-	for (i = 0; i < data_size; i++) {
-		data_clean[i] = (char)algorithmn_decrypt((double)data_encrypted[i], key_no);
+	for (i = 0; i < data_len; ++i)
+	{
+		/* xor char of plaintext with char of key */
+		plaintext[i] = (char)(cyphertext[i] ^ key[index_of_key++]);
+		/*plaintext[i] = (char)(cyphertext[i] ^ '\0');*/
+
+		/* if we reached the end of the key, go back to the start */
+		if (index_of_key == MASTER_KEY_LEN)
+			index_of_key = 0;
 	}
 
-	if (error == 0) {/*if we have no errors so far, we know it is safe to return the data*/
-		*data_cln = *data_clean; /*we pass the values instead of locations, so we can free local storage without troubles*/
+	return plaintext;
+}
+
+
+/*******************************************************************************
+ * Encrypts a file
+ *
+ * Author:
+ * - author_name
+ *
+ * Inputs:
+ * - key         : key
+ * - target_file : file to encrypt
+ *
+ * Outputs:
+ * - 0 if success, else 1
+ *
+*******************************************************************************/
+int encrypt_file(unsigned char *key, char *target_file)
+{
+	FILE *target_p;
+
+	/* open the file */
+	target_p = fopen(target_file, "rb");
+	if (target_p == NULL)
+	{
+		fprintf(stderr, "Error opening target file\n");
+		exit(1);
 	}
-	free(data_clean);
-	return error;
-};
+
+	/* get the filesize of target */
+	long file_size;
+	fseek(target_p, 0L, SEEK_END);
+	file_size = ftell(target_p);
+	rewind(target_p);
+	printf("  Target filesize is %lu\n", file_size);
+
+	/* read all data from file */
+	char *plaintext = (char *)malloc(file_size);
+	fread(plaintext, sizeof(char), file_size, target_p);
+
+	/* close file */
+	fclose(target_p);
+
+	/* encrypt data */
+	char *cyphertext = encrypt_data(key, plaintext, file_size);
+
+	/* open the file again for writing */
+	target_p = fopen(target_file, "wb");
+	if (target_p == NULL)
+	{
+		fprintf(stderr, "Error opening target file\n");
+		exit(1);
+	}
+
+	/* write the cyphertext */
+	fwrite(cyphertext, file_size, 1, target_p);
+
+	/* close the file */
+	fclose(target_p);
+
+	return 0;
+}
+
+
+/*******************************************************************************
+ * Decrypts a file
+ *
+ * Author:
+ * - author_name
+ *
+ * Inputs:
+ * - key         : key
+ * - target_file : file to decrypt
+ *
+ * Outputs:
+ * - 0 if success, else 1
+ *
+*******************************************************************************/
+int decrypt_file(unsigned char *key, char *target_file)
+{
+	FILE *target_p;
+
+	/* open the file */
+	target_p = fopen(target_file, "rb");
+	if (target_p == NULL)
+	{
+		fprintf(stderr, "Error opening target file\n");
+		exit(1);
+	}
+
+	/* get the filesize of target */
+	long file_size;
+	fseek(target_p, 0L, SEEK_END);
+	file_size = ftell(target_p);
+	rewind(target_p);
+	printf("  Target filesize is %lu\n", file_size);
+
+	/* read all data from file */
+	char *cyphertext = (char *)malloc(file_size);
+	fread(cyphertext, sizeof(char), file_size, target_p);
+
+	/* close file */
+	fclose(target_p);
+
+	/* decrypt data */
+	char *plaintext = decrypt_data(key, cyphertext, file_size);
+
+	/* open the file again for writing */
+	target_p = fopen(target_file, "wb");
+	if (target_p == NULL)
+	{
+		fprintf(stderr, "Error opening target file\n");
+		exit(1);
+	}
+
+	/* write the plaintext */
+	fwrite(plaintext, file_size, 1, target_p);
+
+	/* close the file */
+	fclose(target_p);
+
+	return 0;
+}
 
 
 
@@ -189,25 +277,26 @@ int decrypt_file(char* data_encrypted, char* key, long data_size, char* data_cln
  * - A polynomial object
  *
 *******************************************************************************/
-polynomial_t create_polynomial_from_key(char *key)
+polynomial_t create_polynomial_from_key(unsigned char *key)
 {
-    polynomial_t line;
-    line.a = (key[0] << 8) | key[1];
-    line.b = (key[2] << 8) | key[3];
-    line.c = (key[4] << 8) | key[5];
-    return line;
+	polynomial_t poly;
+	poly.a = (key[0] << 8) + key[1];
+	poly.b = (key[2] << 8) + key[3];
+	poly.c = (key[4] << 8) + key[5];
+
+	return poly;
 }
 
 
 /*******************************************************************************
- * Picks a point in the 2D plane that lies on the parabola based
+ * Picks a point in the 2D plane that lies on a parabola based
  * on its coefficients
  *
  * Author:
  * - Rachel
  *
  * Inputs:
- * - p : polynomial
+ * - poly : polynomial
  *
  * Outputs:
  * - a new point
@@ -215,12 +304,14 @@ polynomial_t create_polynomial_from_key(char *key)
 *******************************************************************************/
 point_t pick_point(polynomial_t poly)
 {
-    point_t point;
+	point_t new_point;
 
-    point.x = rand_int(POINT_X_MIN, POINT_X_MAX);
-    point.y = (poly.a * pow(point.x, 2)) + (poly.b * point.x) + poly.c;
+	int x = rand_int(POINT_X_MIN, POINT_X_MAX);
 
-    return point;
+	new_point.x = x;
+	new_point.y = poly.a*x*x + poly.b*x + poly.c;
+
+	return new_point;
 }
 
 
@@ -240,19 +331,78 @@ point_t pick_point(polynomial_t poly)
  * - A polynomial that all three points lay on
  *
 *******************************************************************************/
-polynomial_t find_polynomial(point_t p1, point_t p2, point_t p3) {
-    polynomial_t poly;
+polynomial_t find_polynomial(point_t p1, point_t p2, point_t p3)
+{
+	polynomial_t poly;
 
-    poly.a = p1.y/((p1.x-p2.x)*(p1.x-p3.x)) + p2.y/((p2.x-p1.x)*(p2.x-p3.x)) + p3.y/((p3.x-p1.x)*(p3.x-p2.x));
-    poly.b = -p1.y*(p2.x+p3.x)/((p1.x-p2.x)*(p1.x-p3.x))
-             -p2.y*(p1.x+p3.x)/((p2.x-p1.x)*(p2.x-p3.x))
-             -p3.y*(p1.x+p2.x)/((p3.x-p1.x)*(p3.x-p2.x));
+	/* using simultaneous equations and matrix equations
 
-    poly.c = p1.y*p2.x*p3.x/((p1.x-p2.x)*(p1.x-p3.x))
-           + p2.y*p1.x*p3.x/((p2.x-p1.x)*(p2.x-p3.x))
-           + p3.y*p1.x*p2.x/((p3.x-p1.x)*(p3.x-p2.x));
+	    | p1.x^2  p1.x  1 |
+	A = | p2.x^2  p2.x  1 |
+	    | p3.x^2  p3.x  1 |
 
-    return poly;
+	    | poly.a |
+	B = | poly.b |
+	    | poly.c |
+
+	    | p1.y |
+	C = | p2.y |
+	    | p3.y |
+
+	AB = C
+	*/
+
+	double D = (
+		p1.x*p1.x * p2.x * 1 +
+		p2.x*p2.x * p3.x * 1 +
+		p3.x*p3.x * p1.x * 1
+	) - (
+		p1.x*p1.x * p3.x * 1 +
+		p2.x*p2.x * p1.x * 1 +
+		p3.x*p3.x * p2.x * 1
+	);
+
+
+	poly.a = (
+		(
+			p1.x * p3.y * 1 +
+			p2.x * p1.y * 1 +
+			p3.x * p2.y * 1
+		) - (
+			p1.x * p2.y * 1 +
+			p2.x * p3.y * 1 +
+			p3.x * p1.y * 1 
+		)
+	)/D;
+
+
+	poly.b = (
+		(
+			p1.x*p1.x * p2.y * 1 +
+			p2.x*p2.x * p3.y * 1 +
+			p3.x*p3.x * p1.y * 1
+		) - (
+			p1.x*p1.x * p3.y * 1 +
+			p2.x*p2.x * p1.y * 1 +
+			p3.x*p3.x * p2.y * 1
+		)
+	)/D;
+
+
+	poly.c = (
+		(
+			p1.x*p1.x * p2.x * p3.y +
+			p2.x*p2.x * p3.x * p1.y +
+			p3.x*p3.x * p1.x * p2.y
+		) - (
+			p1.x*p1.x * p3.x * p2.y +
+			p2.x*p2.x * p1.x * p3.y +
+			p3.x*p3.x * p2.x * p1.y
+		)
+	)/D;
+
+
+	return poly;
 }
 
 
@@ -263,13 +413,24 @@ polynomial_t find_polynomial(point_t p1, point_t p2, point_t p3) {
  * - Ben
  *
  * Inputs:
- * - p : polynomial object
+ * - poly : polynomial object
  *
  * Outputs:
  * - Coefficients of p joined together as a key
  *
 *******************************************************************************/
-char *retrieve_key_from_polynomial(polynomial_t p) {
-    char *key_p = (char *)malloc(sizeof(char) * MASTER_KEY_LEN);
-    return key_p;
+unsigned char * retrieve_key_from_polynomial(polynomial_t poly)
+{
+	unsigned char *key = (unsigned char *)malloc(MASTER_KEY_LEN);
+
+	key[0] = poly.a >> 8;
+	key[1] = poly.a & 0xff;
+
+	key[2] = poly.b >> 8;
+	key[3] = poly.b & 0xff;
+
+	key[4] = poly.c >> 8;
+	key[5] = poly.c & 0xff;
+
+	return key;
 }
