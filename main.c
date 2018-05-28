@@ -50,7 +50,6 @@ int validPrintMenu(int choice);
 *******************************************************************************/
 int retrieve_recipe(char *filename, point_t a, point_t b, point_t c)
 {
-<<<<<<< HEAD
     printf("Please enter at lease 3 key codes to decrypt\n")
     printf("code 1>>");
     scanf("%s\n", &a1);
