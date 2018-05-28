@@ -58,13 +58,12 @@ int write_file(char* filename, char* data, long filesize);*/
 *******************************************************************************/
 char * generate_key(void)
 {
-    char * key = (char*) malloc(3 * sizeof(char));
-    key[0] = (char) rand_int(1,255);
-    key[1] = (char) rand_int(1, 255);
-    key[2] = (char) rand_int(1, 255);
-    key[3] = (char)rand_int(1, 255);
-    key[4] = (char)rand_int(1, 255);
-    key[5] = (char)rand_int(1, 255);
+    char * key = (char*) malloc(MASTER_KEY_LEN * sizeof(char));
+	int i;
+	for (i = 0; i < MASTER_KEY_LEN; i++)
+	{
+		key[i] = (char)rand_int(1, 255);
+	}
     return key;
 };
 
@@ -122,9 +121,9 @@ int encrypt_file(char* data_clean, char* key, long data_size, char* data_encrypt
 	}
 
 	if (error == 0) {/*if we have no errors so far, we know it is safe to return the data*/
-		key = key_rand;/*give back the key*/
+		*key = *key_rand;/*give back the key*/
 		/*give back encrypted data*/
-		*data_encrypt = *data_encrypted; /*we pass the values instad of locations, so we can free local storage without troubles*/
+		*data_encrypt = *data_encrypted; /*we pass the values instead of locations, so we can free local storage without troubles*/
 	}
 	free(data_encrypted);
 	free(key_rand);
@@ -164,7 +163,7 @@ int decrypt_file(char* data_encrypted, char* key, long data_size, char* data_cln
 	}
 
 	if (error == 0) {/*if we have no errors so far, we know it is safe to return the data*/
-		*data_cln = *data_clean; /*we pass the values instad of locations, so we can free local storage without troubles*/
+		*data_cln = *data_clean; /*we pass the values instead of locations, so we can free local storage without troubles*/
 	}
 	free(data_clean);
 	return error;
