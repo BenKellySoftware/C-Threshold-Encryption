@@ -50,6 +50,7 @@ int validPrintMenu(int choice);
 *******************************************************************************/
 int retrieve_recipe(char *filename, point_t a, point_t b, point_t c)
 {
+<<<<<<< HEAD
     printf("Please enter at lease 3 key codes to decrypt\n")
     printf("code 1>>");
     scanf("%s\n", &a1);
@@ -88,6 +89,15 @@ int retrieve_recipe(char *filename, point_t a, point_t b, point_t c)
         return 0; 
     }
 
+=======
+	/* run the decryption here */
+
+
+	/* run the decompression here */
+
+
+    return 0;
+>>>>>>> cbb190a6b059634803f10e94d1d85db54242587c
 }
 
 
@@ -106,6 +116,7 @@ int retrieve_recipe(char *filename, point_t a, point_t b, point_t c)
 *******************************************************************************/
 int add_recipe(char *filename)
 {
+<<<<<<< HEAD
     /*Raw recipe file to be read*/
     FILE *raw_p = fopen( filename, "rb");
     /*New file to be encrypted an stored*/
@@ -133,6 +144,15 @@ int add_recipe(char *filename)
     fclose(encrypted_p);
 
     return 0; 
+=======
+	/* run the compression here */
+
+
+	/* run the encryption here */
+
+
+    return 0;
+>>>>>>> cbb190a6b059634803f10e94d1d85db54242587c
 }
 
 
@@ -156,6 +176,7 @@ int add_recipe(char *filename)
 *******************************************************************************/
 int main(int argc, char* argv[])
 {
+<<<<<<< HEAD
     int choice;       
 
     colour_printf("blue", "Welcome to the Bepis Gola Database\n");
@@ -199,6 +220,74 @@ int main(int argc, char* argv[])
         retrieve_recipe(*filename, a, b, c);
     }
     return 0;
+=======
+	int choice;		  
+
+	colour_printf("blue", "Welcome to the Bepis Gola Database\n");
+	if (argc <= 1) /* no arguement entered- therefore use scanf */
+	{
+		do
+		{		
+			printf("\n"
+			"1. add a recipe\n"
+			"2. view the recipe\n"
+			"Please enter a number that correlates with your choice above>\n");
+			scanf("%d", &choice);
+		} 
+		while(!validPrintMenu(choice));
+	}
+	else /* arguements already entered */
+	{
+		/* check if argv[1] is "-h" */
+		/* if it is, display the help */
+
+		if (strcmp(argv[1], "-a") == 0)
+		{
+			/* check if argc == 4, ie they entered ./main.out -a target_file */
+
+			/* if they havent entered files, ask them to enter the target and dest file */
+
+			choice = 1;
+		}
+		else if (strcmp(argv[1], "-v") == 0)
+		{
+			/* check if argc == 4, ie they entered ./main.out -v target_file key1 key2 key3 */
+
+			/* if they havent entered files, ask them to enter the target file and points */
+
+			choice = 2;
+		}
+		else 
+		{
+			printf("There is no mode for the arguement you have entered.\n");
+			return 1;
+		}
+	}
+
+	
+
+
+	if (choice == 1)
+	{
+		/* remove this once target_file and or points are gotten from user input or arguments */
+		char *filename = "Images/recipe.bmp";
+
+		printf("You have chosen to add a recipe.\n");
+		add_recipe(filename);
+	}
+	if (choice == 2)
+	{
+		/* remove this once target_file and or points are gotten from user input or arguments */
+		char *filename = "Images/recipe.compressed";
+		point_t a;
+		point_t b;
+		point_t c;
+
+		printf("You have chosen to view the recipe.\n");
+		retrieve_recipe(filename, a, b, c);
+	}
+	return 0;
+>>>>>>> cbb190a6b059634803f10e94d1d85db54242587c
 }
 
 /*******************************************************************************
