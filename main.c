@@ -89,7 +89,7 @@ int retrieve_recipe(char *filename, point_t a, point_t b, point_t c)
         return 0; 
     }
 
-=======
+
 	/* run the decryption here */
 
 
@@ -97,7 +97,6 @@ int retrieve_recipe(char *filename, point_t a, point_t b, point_t c)
 
 
     return 0;
->>>>>>> cbb190a6b059634803f10e94d1d85db54242587c
 }
 
 
@@ -116,7 +115,6 @@ int retrieve_recipe(char *filename, point_t a, point_t b, point_t c)
 *******************************************************************************/
 int add_recipe(char *filename)
 {
-<<<<<<< HEAD
     /*Raw recipe file to be read*/
     FILE *raw_p = fopen( filename, "rb");
     /*New file to be encrypted an stored*/
@@ -144,7 +142,6 @@ int add_recipe(char *filename)
     fclose(encrypted_p);
 
     return 0; 
-=======
 	/* run the compression here */
 
 
@@ -152,7 +149,7 @@ int add_recipe(char *filename)
 
 
     return 0;
->>>>>>> cbb190a6b059634803f10e94d1d85db54242587c
+
 }
 
 
