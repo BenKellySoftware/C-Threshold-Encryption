@@ -165,9 +165,10 @@ int main(int argc, char* argv[])
 				colour_printf("green", "KEY 3: Please enter two key numbers, "
 					          "separated by a comma>");
 				scanf("%lf, %lf", &point_keys[2].x, &point_keys[2].y);
-				/*TODO: look into how you make the input unreadable, like when
-				you type in passwords in bash. this would be good for these keys*/
-				retrieve_recipe(file_dir, point_keys[0], point_keys[1], point_keys[2]);
+				
+				
+				retrieve_recipe(file_dir, point_keys[0], 
+					            point_keys[1], point_keys[2]);
 
 			}
 			else if (strcmp(choice, "3") == 0)
@@ -199,7 +200,8 @@ int main(int argc, char* argv[])
 			}
 			else
 			{
-				/* if they havent entered files, ask them to enter the target and dest file */
+				/* if they havent entered files, ask them to enter the target */
+				/* and dest file */
 				colour_printf("green", "Please enter the recipe file directory>"
 					          "\n");
 				scanf("%s", file_dir);
@@ -208,7 +210,8 @@ int main(int argc, char* argv[])
 		}
 		else if (strcmp(argv[1], "-v") == 0)
 		{
-			/* check if argc == 6, ie they entered ./main.out -v target_file key1 key2 key3 */
+			/* check if argc == 6, ie they entered ./main.out -v target_file */
+			/* key1 key2 key3 */
 			if (argc == 6)
 			{
 				strcpy(file_dir, argv[2]);
