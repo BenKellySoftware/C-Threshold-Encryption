@@ -4,16 +4,6 @@
 #define STDLIB_H
 #endif
 
-#ifndef RANDOM_H
-#include "random.h"
-#define RANDOM_H
-#endif
-
-#ifndef MATH_H
-#include <math.h>
-#define MATH_H
-#endif
-
 /* Number of individual keys we create */
 #define KEY_COUNT 5
 #define POINT_X_MIN -100
@@ -32,6 +22,58 @@ typedef struct point {
     double x, y;
 } point_t;
 
+
+
+/*******************************************************************************
+ * Generates random int x that fits between 2 values x
+ *
+ * Author: 
+ * - Tom
+ *
+ * Inputs:
+ * - min possible value (inclusive)
+ * - max possible value (non inclusive)
+ *
+ * Outputs: 
+ * - int x where min <= x < max
+ *
+*******************************************************************************/
+int rand_int(int min, int max)
+{
+    unsigned int
+        num_bins = (unsigned int) max - min,
+        num_rand = (unsigned int) RAND_MAX,
+        bin_size = num_rand / num_bins,
+        defect   = num_rand % num_bins;
+
+    int x;
+
+    do {
+        x = rand();
+    } while (num_rand - defect <= (unsigned int)x);
+
+    return x/bin_size + min;
+}
+
+/*******************************************************************************
+ * Reads from the random system file to get a seed for the program
+ *
+ * Author: 
+ * - Ben
+ *
+ * Inputs:
+ * - None
+ *
+ * Outputs: 
+ * - None
+ *
+*******************************************************************************/
+void init_rand(void)
+{
+    FILE *rand_p = fopen("/dev/random", "r");
+    srand(fgetc(rand_p));
+    fclose(rand_p);
+}
 
 /*******************************************************************************
  * Generates a random key, based upon the size of the file.
@@ -346,13 +388,13 @@ polynomial_t find_polynomial(point_t p1, point_t p2, point_t p3)
 	*/
 
 	double D = (
-		p1.x*p1.x * p2.x * 1 +
-		p2.x*p2.x * p3.x * 1 +
-		p3.x*p3.x * p1.x * 1
+		p1.x * p1.x * p2.x * 1 +
+		p2.x * p2.x * p3.x * 1 +
+		p3.x * p3.x * p1.x * 1
 	) - (
-		p1.x*p1.x * p3.x * 1 +
-		p2.x*p2.x * p1.x * 1 +
-		p3.x*p3.x * p2.x * 1
+		p1.x * p1.x * p3.x * 1 +
+		p2.x * p2.x * p1.x * 1 +
+		p3.x * p3.x * p2.x * 1
 	);
 
 	poly.a = (
@@ -369,24 +411,24 @@ polynomial_t find_polynomial(point_t p1, point_t p2, point_t p3)
 
 	poly.b = (
 		(
-			p1.x*p1.x * p2.y * 1 +
-			p2.x*p2.x * p3.y * 1 +
-			p3.x*p3.x * p1.y * 1
+			p1.x * p1.x * p2.y * 1 +
+			p2.x * p2.x * p3.y * 1 +
+			p3.x * p3.x * p1.y * 1
 		) - (
-			p1.x*p1.x * p3.y * 1 +
-			p2.x*p2.x * p1.y * 1 +
-			p3.x*p3.x * p2.y * 1
+			p1.x * p1.x * p3.y * 1 +
+			p2.x * p2.x * p1.y * 1 +
+			p3.x * p3.x * p2.y * 1
 		)
 	)/D;
 
 	poly.c = (
 		(
-			p1.x*p1.x * p2.x * p3.y +
-			p2.x*p2.x * p3.x * p1.y +
-			p3.x*p3.x * p1.x * p2.y
+			p1.x * p1.x * p2.x * p3.y +
+			p2.x * p2.x * p3.x * p1.y +
+			p3.x * p3.x * p1.x * p2.y
 		) - (
-			p1.x*p1.x * p3.x * p2.y +
-			p2.x*p2.x * p1.x * p3.y +
+			p1.x * p1.x * p3.x * p2.y +
+			p2.x * p2.x * p1.x * p3.y +
 			p3.x*p3.x * p2.x * p1.y
 		)
 	)/D;

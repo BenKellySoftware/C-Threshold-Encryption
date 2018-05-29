@@ -134,6 +134,10 @@ int add_recipe(char *filename)
 *******************************************************************************/
 int main(int argc, char* argv[])
 {
+
+    /*Allows random numbers for the crypto points and keys*/
+    init_rand();
+
     char choice[1024];
     char file_dir[1024];
     point_t point_keys[3];
@@ -219,7 +223,7 @@ int main(int argc, char* argv[])
                               "\n");
                 scanf("%s", file_dir);
             }
-            
+
             if (add_recipe(file_dir))
                 return 1;
         }
@@ -252,10 +256,13 @@ int main(int argc, char* argv[])
                               "separated by a comma>");
                 scanf("%lf, %lf", &point_keys[2].x, &point_keys[2].y);
             }
-            retrieve_recipe(file_dir,
-                            point_keys[0],
-                            point_keys[1],
-                            point_keys[2]);
+            if (retrieve_recipe(file_dir,
+                point_keys[0],
+                point_keys[1],
+                point_keys[2]))
+                {
+                    return 1;
+                }
         }
         else 
         {

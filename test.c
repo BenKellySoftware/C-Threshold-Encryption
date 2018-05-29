@@ -9,11 +9,6 @@
 #define STDLIB_H
 #endif
 
-#ifndef RANDOM_H
-#include "random.h"
-#define RANDOM_H
-#endif
-
 #ifndef COLOUR_H
 #include "colour.h"
 #define COLOUR_H
@@ -60,8 +55,8 @@ void test_get_key_from_poly(void);
 
 int main(void)
 {
-	/*test_random();*/
-	test_colour();
+	test_random();
+	/*test_colour();*/
 	/*test_bit_buffer_creation();*/
 	/*test_bit_buffer_reading();*/
 	/*test_compress_char();*/
@@ -74,10 +69,10 @@ int main(void)
 	/*test_encrypt_text();*/
 	/*test_decrypt_text();*/
 	/*test_crypto_file();*/
-	test_polynomials();
+	/*test_polynomials();
 	test_pick_point();
 	test_full_key_gen();
-	test_get_key_from_poly();
+	test_get_key_from_poly();*/
 	
 	return 0;
 }
@@ -139,16 +134,13 @@ void display_key(unsigned char *key)
 void test_random(void)
 {
 	printf("Running test_random\n");
-	int seed;
-	printf("ENTER SEED (int) > ");
-	scanf("%d", &seed);
 
-	init_rand(seed);
+	init_rand();
 
 	int i;
 	for (i = 0; i < 10; ++i)
 	{
-		printf("%d\n", rand_int(-5, 5));
+		printf("%d\n", rand_int(-100, 100));
 	}
 
 	printf("\n");
@@ -381,9 +373,7 @@ void test_encrypt_text(void)
 	char plaintext[6] = {0xde, 0xad, 0xbe, 0xef, 0x00, 0xff};
 	int data_len = 6;
 
-	/* init rand */
-	int seed = 12345;
-	init_rand(seed);
+	init_rand();
 
 	/* generate key ? */
 	unsigned char *key = generate_key();
@@ -407,9 +397,7 @@ void test_decrypt_text(void)
 	char test_text[6] = {0xde, 0xad, 0xbe, 0xef, 0x00, 0xff};
 	int data_len = 6;
 
-	/* init rand */
-	int seed = 54321;
-	init_rand(seed);
+	init_rand();
 
 	/* generate key ? */
 	unsigned char *key = generate_key();
@@ -430,9 +418,7 @@ void test_decrypt_text(void)
 void test_crypto_file(void)
 {
 	printf("Running test_crypto_file\n");
-
-	int seed = 1337;
-	init_rand(seed);
+	init_rand();
 
 	/* generate key ? */
 	unsigned char *key = generate_key();
@@ -472,8 +458,7 @@ void test_polynomials(void)
 {
 	printf("Running test_polynomials\n");
 
-	int seed = 739;
-	init_rand(seed);
+	init_rand();
 
 	unsigned char *key = generate_key();
 
@@ -529,9 +514,7 @@ void test_pick_point(void)
 void test_full_key_gen(void)
 {
 	printf("Running test_full_key_gen\n");
-
-	int seed = 75843;
-	init_rand(seed);
+	init_rand();
 
 	unsigned char *key = generate_key();
 	display_key(key);
@@ -564,9 +547,7 @@ void test_full_key_gen(void)
 void test_get_key_from_poly(void)
 {
 	printf("Running test_get_key_from_poly\n");
-
-	int seed = 739;
-	init_rand(seed);
+	init_rand();
 
 	unsigned char *key = generate_key();
 	display_key(key);
