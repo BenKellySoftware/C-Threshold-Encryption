@@ -129,12 +129,13 @@ int main(int argc, char* argv[])
 	char file_dir[1024];
 	point_t point_keys[3];
 
-	colour_printf("blue", "Welcome to the Bepis Gola Database\n");
+	colour_printf("green", "Welcome to the Bepis Gola Database\n");
 	if (argc <= 1) /* no arguement entered- therefore use scanf */
 	{
 		do
 		{		
-			printf("\n"
+			colour_printf("green", 
+			"\n"
 			"1. add a recipe\n"
 			"2. view the recipe\n"
 			"3. exit\n"
@@ -142,22 +143,27 @@ int main(int argc, char* argv[])
 			scanf("%s", choice);
 			if (strcmp(choice, "1") == 0)
 			{
-				printf("Please enter the recipe file directory>\n");
+				colour_printf("green", "Please enter the recipe file directory>"
+					          "\n");
 				scanf("%s", file_dir);
 
 				add_recipe(file_dir);
 			}
 			else if(strcmp(choice, "2") == 0)
 			{
-				printf("Please enter the recipe file directory>\n");
+				colour_printf("green", "Please enter the recipe file directory>"
+					          "\n");
 				scanf("%s", file_dir);
 				
 
-				printf("KEY 1: Please enter two key numbers, spearated by a comma>");
+				colour_printf("green", "KEY 1: Please enter two key numbers, "
+					          "separated by a comma>");
 				scanf("%lf, %lf", &point_keys[0].x, &point_keys[0].y);
-				printf("KEY 2: Please enter two key numbers, separated by a comma>");
+				colour_printf("green", "KEY 2: Please enter two key numbers, "
+					          "separated by a comma>");
 				scanf("%lf, %lf", &point_keys[1].x, &point_keys[1].y);
-				printf("KEY 3: Please enter two key numbers, separated by a comma>");
+				colour_printf("green", "KEY 3: Please enter two key numbers, "
+					          "separated by a comma>");
 				scanf("%lf, %lf", &point_keys[2].x, &point_keys[2].y);
 				/*TODO: look into how you make the input unreadable, like when
 				you type in passwords in bash. this would be good for these keys*/
@@ -170,7 +176,7 @@ int main(int argc, char* argv[])
 			}
 			else
 			{
-				printf("Invalid choice\n");
+				colour_printf("red", "Invalid choice\n");
 			}
 			/*all other entries are handled by validPrintMenu*/
 		} 
@@ -194,7 +200,8 @@ int main(int argc, char* argv[])
 			else
 			{
 				/* if they havent entered files, ask them to enter the target and dest file */
-				printf("Please enter the recipe file directory>\n");
+				colour_printf("green", "Please enter the recipe file directory>"
+					          "\n");
 				scanf("%s", file_dir);
 			}
 			add_recipe(file_dir);
@@ -212,14 +219,19 @@ int main(int argc, char* argv[])
 			}
 			else
 			{
-				/* if they havent entered files, ask them to enter the target file and points */
-				printf("Please enter the recipe file directory>\n");
+				/* if they havent entered files, ask them to enter the target*/ 
+				/* file and points */
+				colour_printf("green", "Please enter the recipe file directory>"
+					          "\n");
 				scanf("%s", file_dir);
-				printf("KEY 1: Please enter two key numbers, spearated by a comma>");
+				colour_printf("green", "KEY 1: Please enter two key numbers, "
+					          "separated by a comma>");
 				scanf("%lf, %lf", &point_keys[0].x, &point_keys[0].y);
-				printf("KEY 2: Please enter two key numbers, separated by a comma>");
+				colour_printf("green", "KEY 2: Please enter two key numbers, "
+					          "separated by a comma>");
 				scanf("%lf, %lf", &point_keys[1].x, &point_keys[1].y);
-				printf("KEY 3: Please enter two key numbers, separated by a comma>");
+				colour_printf("green", "KEY 3: Please enter two key numbers, "
+					          "separated by a comma>");
 				scanf("%lf, %lf", &point_keys[2].x, &point_keys[2].y);
 			}
 			retrieve_recipe(file_dir, point_keys[0],
@@ -227,7 +239,8 @@ int main(int argc, char* argv[])
 		}
 		else 
 		{
-			printf("There is no mode for the arguement you have entered.\n");
+			colour_printf("red", "There is no mode for the arguement you have " 
+			              "entered.\n");
 			return 1;
 		}
 	}
@@ -253,7 +266,7 @@ int validPrintMenu(int choice)
 {
     if (choice < 1 || choice > 2)
     {
-        printf("Invalid choice\n");
+        colour_printf("red", "Invalid choice\n");
         return 0;
     } 
     return 1;

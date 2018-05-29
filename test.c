@@ -64,7 +64,7 @@ void test_get_key_from_poly(void);
 int main(void)
 {
 	/*test_random();*/
-	/*test_colour();*/
+	test_colour();
 	/*test_bit_buffer_creation();*/
 	/*test_bit_buffer_reading();*/
 	/*test_compress_char();*/
