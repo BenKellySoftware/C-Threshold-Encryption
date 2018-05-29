@@ -1,8 +1,9 @@
 
 #ifndef STDLIB_H
-#include <stdlib.h>
+#include <stdlib.h> /*malloc, long*/
 #define STDLIB_H
 #endif
+
 
 /* Number of individual keys we create */
 #define KEY_COUNT 5
