@@ -222,7 +222,8 @@ int main(int argc, char* argv[])
 				printf("KEY 3: Please enter two key numbers, separated by a comma>");
 				scanf("%lf, %lf", &point_keys[2].x, &point_keys[2].y);
 			}
-			retrieve_recipe(file_dir, point_keys[0], point_keys[1], point_keys[2]);
+			retrieve_recipe(file_dir, point_keys[0],
+						    point_keys[1], point_keys[2]);
 		}
 		else 
 		{
@@ -232,17 +233,6 @@ int main(int argc, char* argv[])
 	}
 
 	return 0;	
-
-
-	/*if (choice == 1)
-	{
-		add_recipe(file_dir);
-	}
-	if (choice == 2)
-	{
-		retrieve_recipe(file_dir, point_keys[0], point_keys[1], point_keys[2]);
-	}
-	return 0;*/
 }
 
 
@@ -270,7 +260,39 @@ int validPrintMenu(int choice)
 }
 
 
+/*******************************************************************************
+ * This function displays the help menu.  
+ *  
+ * Author: 
+ * - Rachel
+ *
+ * Inputs:
+ * - none
+ *
+ * Outputs:
+ * - none
+*******************************************************************************/
 void display_usage(void)
 {
-	printf("Usage info goes here\n");
+	colour_printf("cyan", "Help Menu:\n"
+		"\n"
+		"  -a   [adds a recipe to the Database] \n"
+		"\n"
+		"  -a target_file    [adds target_file directly to the Database\n"
+		"                    otherwise program will prompt input of\n"
+		"                    target_file]\n"
+		"\n"
+		"  -v   [views a recipe already in the Database]\n"
+		"\n"
+		"  -v target_file key1 key2 key3    [opens target_file directly using\n"
+		"                                   3 keys otherwise the program will\n"
+		"                                   prompt input of target_file\n"
+		"                                   and 3 keys]\n"
+		"\n"
+		"  -h 	[help menu]\n");
 }
+
+/*errors in red
+warnings in yellow
+general in blue
+good in green */
