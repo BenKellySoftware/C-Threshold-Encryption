@@ -1,31 +1,33 @@
 
 #ifndef STDIO_H
-#include <stdio.h>
+#include <stdio.h> /* scanf, printf, sscanf */
 #define STDIO_H
 #endif
 
 #ifndef STRING_H
-#include <string.h>
+#include <string.h> /* strcpy, strcmp */
 #define STRING_H
 #endif
 
 #ifndef CRYPTO_H
-#include "crypto.h"
+#include "crypto.h" /* find_polynomial, retrieve_key_from_polynomial,
+					   decrypt_file, create_polynomial_from_key, generate_key, 
+					   encrypt_file, pick_point */
 #define CRYPTO_H
 #endif
 
 #ifndef COMPRESSION_H
-#include "compression.h"
+#include "compression.h" /* decompress_file, compress_file, */
 #define COMPRESSION_H
 #endif
 
 #ifndef COLOUR_H
-#include "colour.h"
+#include "colour.h" /* colour_printf */
 #define COLOUR_H
 #endif
 
 
-#define HUFFMAN_CODE_FILE "hackerman.codes"
+#define HUFFMAN_CODE_FILE "hackerman.codes" /* load_huffman_code_from_file */
 
 
 /* prototypes */
@@ -202,7 +204,7 @@ int main(int argc, char* argv[])
         {
             /*print help menu*/
             display_usage();
-            exit(1);
+            return 1;
         }
         if (strcmp(argv[1], "-a") == 0)
         {
@@ -324,8 +326,3 @@ void display_usage(void)
         "\n"
         "  -h   [help menu]\n");
 }
-
-/*errors in red
-warnings in yellow
-general in blue
-good in green */
