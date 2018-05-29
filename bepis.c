@@ -134,7 +134,7 @@ int add_recipe(char *filename)
 *******************************************************************************/
 int main(int argc, char* argv[])
 {
-    char choice[1024];  
+    char choice[1024];
     char file_dir[1024];
     point_t point_keys[3];
 
@@ -143,15 +143,17 @@ int main(int argc, char* argv[])
     {
         do
         {
-            printf("\n"
-                   "1. add a recipe\n"
-                   "2. view the recipe\n"
-                   "3. exit\n"
-                   "Please enter a number that correlates with your choice>\n");
+            colour_printf("green", 
+                "1. add a recipe\n"
+                "2. view the recipe\n"
+                "3. exit\n"
+                "Please enter a number that correlates with your choice>\n");
             scanf("%s", choice);
             if (strcmp(choice, "1") == 0)
             {
-                printf("Please enter the recipe file directory>\n");
+                colour_printf("green", "Please enter the recipe file directory>"
+                    "\n");
+
                 scanf("%s", file_dir);
 
                 if (add_recipe(file_dir))
@@ -159,20 +161,29 @@ int main(int argc, char* argv[])
             }
             else if(strcmp(choice, "2") == 0)
             {
-                printf("Please enter the recipe file directory>\n");
+                colour_printf("green", "Please enter the recipe file directory>"
+                    "\n");
+
                 scanf("%s", file_dir);
                 
-                printf("Point 1: Please enter two key numbers, spearated by a comma>");
+                colour_printf("green", "KEY 1: Please enter two key numbers, "
+                              "separated by a comma>");
                 scanf("%lf, %lf", &point_keys[0].x, &point_keys[0].y);
-                printf("KEY 2: Please enter two key numbers, separated by a comma>");
+                colour_printf("green", "KEY 2: Please enter two key numbers, "
+                              "separated by a comma>");
                 scanf("%lf, %lf", &point_keys[1].x, &point_keys[1].y);
-                printf("KEY 3: Please enter two key numbers, separated by a comma>");
+                colour_printf("green", "KEY 3: Please enter two key numbers, "
+                              "separated by a comma>");
                 scanf("%lf, %lf", &point_keys[2].x, &point_keys[2].y);
                 /*TODO: look into how you make the input unreadable, like when
                 you type in passwords in bash. this would be good for these keys*/
-                if (retrieve_recipe(file_dir, point_keys[0], point_keys[1], point_keys[2]))
+                if (retrieve_recipe(file_dir,
+                                    point_keys[0],
+                                    point_keys[1],
+                                    point_keys[2]))
+                {
                     return 1;
-
+                }
             }
             else if (strcmp(choice, "3") == 0)
             {
@@ -180,7 +191,7 @@ int main(int argc, char* argv[])
             }
             else
             {
-                printf("Invalid choice\n");
+                colour_printf("red", "Invalid choice\n");
             }
         } 
         while(1);
@@ -191,9 +202,9 @@ int main(int argc, char* argv[])
         {
             /*print help menu*/
             display_usage();
-            return 0;
+            exit(1);
         }
-        else if (strcmp(argv[1], "-a") == 0)
+        if (strcmp(argv[1], "-a") == 0)
         {
             /* check if argc == 3, ie they entered ./main.out -a target_file */
             if (argc == 3)
@@ -202,15 +213,20 @@ int main(int argc, char* argv[])
             }
             else
             {
-                /* if they havent entered files, ask them to enter the target and dest file */
-                printf("Please enter the recipe file directory>\n");
+                /* if they havent entered files, ask them to enter the target */
+                /* and dest file */
+                colour_printf("green", "Please enter the recipe file directory>"
+                              "\n");
                 scanf("%s", file_dir);
             }
-            add_recipe(file_dir);
+            
+            if (add_recipe(file_dir))
+                return 1;
         }
         else if (strcmp(argv[1], "-v") == 0)
         {
-            /* check if argc == 6, ie they entered ./main.out -v target_file key1 key2 key3 */
+            /* check if argc == 6, ie they entered ./main.out -v target_file */
+            /* key1 key2 key3 */
             if (argc == 6)
             {
                 strcpy(file_dir, argv[2]);
@@ -221,26 +237,35 @@ int main(int argc, char* argv[])
             }
             else
             {
-                /* if they havent entered files, ask them to enter the target file and points */
-                printf("Please enter the recipe file directory>\n");
+                /* if they havent entered files, ask them to enter the target*/ 
+                /* file and points */
+                colour_printf("green", "Please enter the recipe file directory>"
+                              "\n");
                 scanf("%s", file_dir);
-                printf("KEY 1: Please enter two key numbers, spearated by a comma>");
+                colour_printf("green", "KEY 1: Please enter two key numbers, "
+                              "separated by a comma>");
                 scanf("%lf, %lf", &point_keys[0].x, &point_keys[0].y);
-                printf("KEY 2: Please enter two key numbers, separated by a comma>");
+                colour_printf("green", "KEY 2: Please enter two key numbers, "
+                              "separated by a comma>");
                 scanf("%lf, %lf", &point_keys[1].x, &point_keys[1].y);
-                printf("KEY 3: Please enter two key numbers, separated by a comma>");
+                colour_printf("green", "KEY 3: Please enter two key numbers, "
+                              "separated by a comma>");
                 scanf("%lf, %lf", &point_keys[2].x, &point_keys[2].y);
             }
-            retrieve_recipe(file_dir, point_keys[0], point_keys[1], point_keys[2]);
+            retrieve_recipe(file_dir,
+                            point_keys[0],
+                            point_keys[1],
+                            point_keys[2]);
         }
         else 
         {
-            printf("There is no mode for the arguement you have entered.\n");
+            colour_printf("red", "There is no mode for the arguement you have " 
+                          "entered.\n");
             return 1;
         }
     }
 
-    return 0;
+    return 0;   
 }
 
 
@@ -261,14 +286,46 @@ int valid_print_menu(int choice)
 {
     if (choice < 1 || choice > 2)
     {
-        printf("Invalid choice\n");
+        colour_printf("red", "Invalid choice\n");
         return 0;
     } 
     return 1;
 }
 
 
+/*******************************************************************************
+ * This function displays the help menu.  
+ *  
+ * Author: 
+ * - Rachel
+ *
+ * Inputs:
+ * - none
+ *
+ * Outputs:
+ * - none
+*******************************************************************************/
 void display_usage(void)
 {
-    printf("Usage info goes here\n");
+    colour_printf("cyan", "Help Menu:\n"
+        "\n"
+        "  -a   [adds a recipe to the Database] \n"
+        "\n"
+        "  -a target_file    [adds target_file directly to the Database\n"
+        "                    otherwise program will prompt input of\n"
+        "                    target_file]\n"
+        "\n"
+        "  -v   [views a recipe already in the Database]\n"
+        "\n"
+        "  -v target_file key1 key2 key3    [opens target_file directly using\n"
+        "                                   3 keys otherwise the program will\n"
+        "                                   prompt input of target_file\n"
+        "                                   and 3 keys]\n"
+        "\n"
+        "  -h   [help menu]\n");
 }
+
+/*errors in red
+warnings in yellow
+general in blue
+good in green */
