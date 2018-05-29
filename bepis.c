@@ -125,7 +125,7 @@ int add_recipe(char *filename)
 *******************************************************************************/
 int main(int argc, char* argv[])
 {
-	int choice;	
+	char choice[1024];	
 	char file_dir[1024];
 	point_t point_keys[3];
 
@@ -137,15 +137,17 @@ int main(int argc, char* argv[])
 			printf("\n"
 			"1. add a recipe\n"
 			"2. view the recipe\n"
+			"3. exit\n"
 			"Please enter a number that correlates with your choice>\n");
-			scanf("%d", &choice);
-			
-			if (choice == 1)
+			scanf("%s", choice);
+			if (strcmp(choice, "1") == 0)
 			{
 				printf("Please enter the recipe file directory>\n");
 				scanf("%s", file_dir);
+
+				add_recipe(file_dir);
 			}
-			else if(choice == 2)
+			else if(strcmp(choice, "2") == 0)
 			{
 				printf("Please enter the recipe file directory>\n");
 				scanf("%s", file_dir);
@@ -159,11 +161,20 @@ int main(int argc, char* argv[])
 				scanf("%lf, %lf", &point_keys[2].x, &point_keys[2].y);
 				/*TODO: look into how you make the input unreadable, like when
 				you type in passwords in bash. this would be good for these keys*/
+				retrieve_recipe(file_dir, point_keys[0], point_keys[1], point_keys[2]);
 
+			}
+			else if (strcmp(choice, "3") == 0)
+			{
+				exit(0);
+			}
+			else
+			{
+				printf("Invalid choice\n");
 			}
 			/*all other entries are handled by validPrintMenu*/
 		} 
-		while(!validPrintMenu(choice));
+		while(1);
 	}
 	else /* arguements already entered */
 	{
@@ -186,7 +197,7 @@ int main(int argc, char* argv[])
 				printf("Please enter the recipe file directory>\n");
 				scanf("%s", file_dir);
 			}
-			choice = 1;
+			add_recipe(file_dir);
 		}
 		else if (strcmp(argv[1], "-v") == 0)
 		{
@@ -211,7 +222,7 @@ int main(int argc, char* argv[])
 				printf("KEY 3: Please enter two key numbers, separated by a comma>");
 				scanf("%lf, %lf", &point_keys[2].x, &point_keys[2].y);
 			}
-			choice = 2;
+			retrieve_recipe(file_dir, point_keys[0], point_keys[1], point_keys[2]);
 		}
 		else 
 		{
@@ -220,10 +231,10 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	
+	return 0;	
 
 
-	if (choice == 1)
+	/*if (choice == 1)
 	{
 		add_recipe(file_dir);
 	}
@@ -231,7 +242,7 @@ int main(int argc, char* argv[])
 	{
 		retrieve_recipe(file_dir, point_keys[0], point_keys[1], point_keys[2]);
 	}
-	return 0;
+	return 0;*/
 }
 
 
