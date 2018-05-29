@@ -1,17 +1,12 @@
 
 #ifndef STDLIB_H
-#include <stdlib.h>
+#include <stdlib.h> /*malloc, long*/
 #define STDLIB_H
 #endif
 
 #ifndef RANDOM_H
 #include "random.h"
 #define RANDOM_H
-#endif
-
-#ifndef MATH_H
-#include <math.h>
-#define MATH_H
 #endif
 
 /* Number of individual keys we create */
