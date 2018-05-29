@@ -22,14 +22,13 @@
 #endif
 
 
-
 int main(int argc, char const *filenames[])
 {
 	/* check if any files were entered */
 	if (argc <= 1)
 	{
 		fprintf(stderr, "No files entered for using as reference\n");
-		exit(1);
+		return 1;
 	}
 
 	printf("Generating a huffman code file...\n");
@@ -52,7 +51,7 @@ int main(int argc, char const *filenames[])
 		if (file_p == NULL)
 		{
 			fprintf(stderr, "Failed opening file\n");
-			exit(1);
+			return 1;
 		}
 
 		/* count the frequency of each byte */
@@ -91,7 +90,8 @@ int main(int argc, char const *filenames[])
 		printf("\n");
 	#endif
 
-	write_huffman_code_to_file(codes, "hackerman.codes");
+	if (!write_huffman_code_to_file(codes, "hackerman.codes"))
+		return 1;
 
 	printf("Done!\n");
 

@@ -140,7 +140,7 @@ char * decrypt_data(unsigned char *key, char *cyphertext, int data_len)
  * Encrypts a file
  *
  * Author:
- * - author_name
+ * - Jack
  *
  * Inputs:
  * - key         : key
@@ -159,7 +159,7 @@ int encrypt_file(unsigned char *key, char *target_file)
 	if (target_p == NULL)
 	{
 		fprintf(stderr, "Error opening target file\n");
-		exit(1);
+		return 1;
 	}
 
 	/* get the filesize of target */
@@ -167,7 +167,7 @@ int encrypt_file(unsigned char *key, char *target_file)
 	fseek(target_p, 0L, SEEK_END);
 	file_size = ftell(target_p);
 	rewind(target_p);
-	printf("  Target filesize is %lu\n", file_size);
+	printf("Target filesize is %lu\n", file_size);
 
 	/* read all data from file */
 	char *plaintext = (char *)malloc(file_size);
@@ -184,7 +184,7 @@ int encrypt_file(unsigned char *key, char *target_file)
 	if (target_p == NULL)
 	{
 		fprintf(stderr, "Error opening target file\n");
-		exit(1);
+		return 1;
 	}
 
 	/* write the cyphertext */
@@ -201,7 +201,7 @@ int encrypt_file(unsigned char *key, char *target_file)
  * Decrypts a file
  *
  * Author:
- * - author_name
+ * - Jack
  *
  * Inputs:
  * - key         : key
@@ -220,7 +220,7 @@ int decrypt_file(unsigned char *key, char *target_file)
 	if (target_p == NULL)
 	{
 		fprintf(stderr, "Error opening target file\n");
-		exit(1);
+		return 1;
 	}
 
 	/* get the filesize of target */
@@ -245,7 +245,7 @@ int decrypt_file(unsigned char *key, char *target_file)
 	if (target_p == NULL)
 	{
 		fprintf(stderr, "Error opening target file\n");
-		exit(1);
+		return 1;
 	}
 
 	/* write the plaintext */
@@ -256,12 +256,6 @@ int decrypt_file(unsigned char *key, char *target_file)
 
 	return 0;
 }
-
-
-
-
-
-
 
 
 /*******************************************************************************
@@ -336,20 +330,19 @@ polynomial_t find_polynomial(point_t p1, point_t p2, point_t p3)
 	polynomial_t poly;
 
 	/* using simultaneous equations and matrix equations
+		    | p1.x^2  p1.x  1 |
+		A = | p2.x^2  p2.x  1 |
+		    | p3.x^2  p3.x  1 |
 
-	    | p1.x^2  p1.x  1 |
-	A = | p2.x^2  p2.x  1 |
-	    | p3.x^2  p3.x  1 |
+		    | poly.a |
+		B = | poly.b |
+		    | poly.c |
 
-	    | poly.a |
-	B = | poly.b |
-	    | poly.c |
+		    | p1.y |
+		C = | p2.y |
+		    | p3.y |
 
-	    | p1.y |
-	C = | p2.y |
-	    | p3.y |
-
-	AB = C
+		AB = C
 	*/
 
 	double D = (
@@ -361,7 +354,6 @@ polynomial_t find_polynomial(point_t p1, point_t p2, point_t p3)
 		p2.x*p2.x * p1.x * 1 +
 		p3.x*p3.x * p2.x * 1
 	);
-
 
 	poly.a = (
 		(
@@ -375,7 +367,6 @@ polynomial_t find_polynomial(point_t p1, point_t p2, point_t p3)
 		)
 	)/D;
 
-
 	poly.b = (
 		(
 			p1.x*p1.x * p2.y * 1 +
@@ -388,7 +379,6 @@ polynomial_t find_polynomial(point_t p1, point_t p2, point_t p3)
 		)
 	)/D;
 
-
 	poly.c = (
 		(
 			p1.x*p1.x * p2.x * p3.y +
@@ -400,7 +390,6 @@ polynomial_t find_polynomial(point_t p1, point_t p2, point_t p3)
 			p3.x*p3.x * p2.x * p1.y
 		)
 	)/D;
-
 
 	return poly;
 }

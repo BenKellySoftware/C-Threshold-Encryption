@@ -31,7 +31,7 @@
 /* prototypes */
 int retrieve_recipe(char *filename, point_t a, point_t b, point_t c);
 int add_recipe(char *filename);
-int validPrintMenu(int choice);
+int valid_print_menu(int choice);
 void display_usage(void);
 
 
@@ -54,14 +54,18 @@ void display_usage(void);
 *******************************************************************************/
 int retrieve_recipe(char *filename, point_t a, point_t b, point_t c)
 {
-	/* decrypting */
-	polynomial_t poly = find_polynomial(a, b, c);
-	unsigned char *key = retrieve_key_from_polynomial(poly);
-	decrypt_file(key, filename);
+    /* decrypting */
+    polynomial_t poly = find_polynomial(a, b, c);
+    unsigned char *key = retrieve_key_from_polynomial(poly);
+    if (decrypt_file(key, filename))
+        return 1;
 
-	/* decompressing */
-	huffman_code_t *codes = load_huffman_code_from_file(HUFFMAN_CODE_FILE);
-	decompress_file(codes, filename);
+    /* decompressing */
+    huffman_code_t *codes = load_huffman_code_from_file(HUFFMAN_CODE_FILE);
+    if (codes == NULL)
+        return 1;
+    if(decompress_file(codes, filename))
+        return 1;
 
     return 0;
 }
@@ -82,25 +86,30 @@ int retrieve_recipe(char *filename, point_t a, point_t b, point_t c)
 *******************************************************************************/
 int add_recipe(char *filename)
 {
-	/* compressing */
-	huffman_code_t *codes = load_huffman_code_from_file(HUFFMAN_CODE_FILE);
-	compress_file(codes, filename);
+    /* compressing */
+    huffman_code_t *codes = load_huffman_code_from_file(HUFFMAN_CODE_FILE);
+    if (codes == NULL)
+        return 1;
 
-	/* encrypting */
-	unsigned char *key = generate_key();
-	polynomial_t poly = create_polynomial_from_key(key);
-	encrypt_file(key, filename);
+    if (compress_file(codes, filename))
+        return 1;
 
-	/* display points */
-	point_t p;
-	int point_num;
-	for (point_num = 0; point_num < KEY_COUNT; ++point_num)
-	{
-		p = pick_point(poly);
-		printf("Point %d is (%d, %d)\n", point_num, (int)p.x, (int)p.y);
-	}
+    /* encrypting */
+    unsigned char *key = generate_key();
+    polynomial_t poly = create_polynomial_from_key(key);
+    if (encrypt_file(key, filename))
+        return 1;
 
-	return 0;
+    /* display points */
+    point_t p;
+    int point_num;
+    for (point_num = 0; point_num < KEY_COUNT; ++point_num)
+    {
+        p = pick_point(poly);
+        printf("Point %d is (%d, %d)\n", point_num, (int)p.x, (int)p.y);
+    }
+
+    return 0;
 }
 
 
@@ -125,124 +134,113 @@ int add_recipe(char *filename)
 *******************************************************************************/
 int main(int argc, char* argv[])
 {
-	char choice[1024];	
-	char file_dir[1024];
-	point_t point_keys[3];
+    char choice[1024];  
+    char file_dir[1024];
+    point_t point_keys[3];
 
-	colour_printf("blue", "Welcome to the Bepis Gola Database\n");
-	if (argc <= 1) /* no arguement entered- therefore use scanf */
-	{
-		do
-		{		
-			printf("\n"
-			"1. add a recipe\n"
-			"2. view the recipe\n"
-			"3. exit\n"
-			"Please enter a number that correlates with your choice>\n");
-			scanf("%s", choice);
-			if (strcmp(choice, "1") == 0)
-			{
-				printf("Please enter the recipe file directory>\n");
-				scanf("%s", file_dir);
+    colour_printf("blue", "Welcome to the Bepis Gola Database\n");
+    if (argc <= 1) /* no arguement entered- therefore use scanf */
+    {
+        do
+        {
+            printf("\n"
+                   "1. add a recipe\n"
+                   "2. view the recipe\n"
+                   "3. exit\n"
+                   "Please enter a number that correlates with your choice>\n");
+            scanf("%s", choice);
+            if (strcmp(choice, "1") == 0)
+            {
+                printf("Please enter the recipe file directory>\n");
+                scanf("%s", file_dir);
 
-				add_recipe(file_dir);
-			}
-			else if(strcmp(choice, "2") == 0)
-			{
-				printf("Please enter the recipe file directory>\n");
-				scanf("%s", file_dir);
-				
+                if (add_recipe(file_dir))
+                    return 1;
+            }
+            else if(strcmp(choice, "2") == 0)
+            {
+                printf("Please enter the recipe file directory>\n");
+                scanf("%s", file_dir);
+                
+                printf("Point 1: Please enter two key numbers, spearated by a comma>");
+                scanf("%lf, %lf", &point_keys[0].x, &point_keys[0].y);
+                printf("KEY 2: Please enter two key numbers, separated by a comma>");
+                scanf("%lf, %lf", &point_keys[1].x, &point_keys[1].y);
+                printf("KEY 3: Please enter two key numbers, separated by a comma>");
+                scanf("%lf, %lf", &point_keys[2].x, &point_keys[2].y);
+                /*TODO: look into how you make the input unreadable, like when
+                you type in passwords in bash. this would be good for these keys*/
+                if (retrieve_recipe(file_dir, point_keys[0], point_keys[1], point_keys[2]))
+                    return 1;
 
-				printf("KEY 1: Please enter two key numbers, spearated by a comma>");
-				scanf("%lf, %lf", &point_keys[0].x, &point_keys[0].y);
-				printf("KEY 2: Please enter two key numbers, separated by a comma>");
-				scanf("%lf, %lf", &point_keys[1].x, &point_keys[1].y);
-				printf("KEY 3: Please enter two key numbers, separated by a comma>");
-				scanf("%lf, %lf", &point_keys[2].x, &point_keys[2].y);
-				/*TODO: look into how you make the input unreadable, like when
-				you type in passwords in bash. this would be good for these keys*/
-				retrieve_recipe(file_dir, point_keys[0], point_keys[1], point_keys[2]);
+            }
+            else if (strcmp(choice, "3") == 0)
+            {
+                return 0;
+            }
+            else
+            {
+                printf("Invalid choice\n");
+            }
+        } 
+        while(1);
+    }
+    else /* arguements already entered */
+    {
+        if (strcmp(argv[1], "-h") == 0)
+        {
+            /*print help menu*/
+            display_usage();
+            return 0;
+        }
+        else if (strcmp(argv[1], "-a") == 0)
+        {
+            /* check if argc == 3, ie they entered ./main.out -a target_file */
+            if (argc == 3)
+            {
+                strcpy(file_dir, argv[2]);
+            }
+            else
+            {
+                /* if they havent entered files, ask them to enter the target and dest file */
+                printf("Please enter the recipe file directory>\n");
+                scanf("%s", file_dir);
+            }
+            add_recipe(file_dir);
+        }
+        else if (strcmp(argv[1], "-v") == 0)
+        {
+            /* check if argc == 6, ie they entered ./main.out -v target_file key1 key2 key3 */
+            if (argc == 6)
+            {
+                strcpy(file_dir, argv[2]);
 
-			}
-			else if (strcmp(choice, "3") == 0)
-			{
-				exit(0);
-			}
-			else
-			{
-				printf("Invalid choice\n");
-			}
-			/*all other entries are handled by validPrintMenu*/
-		} 
-		while(1);
-	}
-	else /* arguements already entered */
-	{
-		if (strcmp(argv[1], "-h") == 0)
-		{
-			/*print help menu*/
-			display_usage();
-			exit(1);
-		}
-		if (strcmp(argv[1], "-a") == 0)
-		{
-			/* check if argc == 3, ie they entered ./main.out -a target_file */
-			if (argc == 3)
-			{
-				strcpy(file_dir, argv[2]);
-			}
-			else
-			{
-				/* if they havent entered files, ask them to enter the target and dest file */
-				printf("Please enter the recipe file directory>\n");
-				scanf("%s", file_dir);
-			}
-			add_recipe(file_dir);
-		}
-		else if (strcmp(argv[1], "-v") == 0)
-		{
-			/* check if argc == 6, ie they entered ./main.out -v target_file key1 key2 key3 */
-			if (argc == 6)
-			{
-				strcpy(file_dir, argv[2]);
+                sscanf(argv[3], "%lf,%lf", &point_keys[0].x, &point_keys[0].y);
+                sscanf(argv[4], "%lf,%lf", &point_keys[1].x, &point_keys[1].y);
+                sscanf(argv[5], "%lf,%lf", &point_keys[2].x, &point_keys[2].y);
+            }
+            else
+            {
+                /* if they havent entered files, ask them to enter the target file and points */
+                printf("Please enter the recipe file directory>\n");
+                scanf("%s", file_dir);
+                printf("KEY 1: Please enter two key numbers, spearated by a comma>");
+                scanf("%lf, %lf", &point_keys[0].x, &point_keys[0].y);
+                printf("KEY 2: Please enter two key numbers, separated by a comma>");
+                scanf("%lf, %lf", &point_keys[1].x, &point_keys[1].y);
+                printf("KEY 3: Please enter two key numbers, separated by a comma>");
+                scanf("%lf, %lf", &point_keys[2].x, &point_keys[2].y);
+            }
+            retrieve_recipe(file_dir, point_keys[0], point_keys[1], point_keys[2]);
+        }
+        else 
+        {
+            printf("There is no mode for the arguement you have entered.\n");
+            return 1;
+        }
+    }
 
-				sscanf(argv[3], "%lf,%lf", &point_keys[0].x, &point_keys[0].y);
-				sscanf(argv[4], "%lf,%lf", &point_keys[1].x, &point_keys[1].y);
-				sscanf(argv[5], "%lf,%lf", &point_keys[2].x, &point_keys[2].y);
-			}
-			else
-			{
-				/* if they havent entered files, ask them to enter the target file and points */
-				printf("Please enter the recipe file directory>\n");
-				scanf("%s", file_dir);
-				printf("KEY 1: Please enter two key numbers, spearated by a comma>");
-				scanf("%lf, %lf", &point_keys[0].x, &point_keys[0].y);
-				printf("KEY 2: Please enter two key numbers, separated by a comma>");
-				scanf("%lf, %lf", &point_keys[1].x, &point_keys[1].y);
-				printf("KEY 3: Please enter two key numbers, separated by a comma>");
-				scanf("%lf, %lf", &point_keys[2].x, &point_keys[2].y);
-			}
-			retrieve_recipe(file_dir, point_keys[0], point_keys[1], point_keys[2]);
-		}
-		else 
-		{
-			printf("There is no mode for the arguement you have entered.\n");
-			return 1;
-		}
-	}
-
-	return 0;	
-
-
-	/*if (choice == 1)
-	{
-		add_recipe(file_dir);
-	}
-	if (choice == 2)
-	{
-		retrieve_recipe(file_dir, point_keys[0], point_keys[1], point_keys[2]);
-	}
-	return 0;*/
+    return 0;
 }
 
 
@@ -259,7 +257,7 @@ int main(int argc, char* argv[])
  * - 1 for valid
  * - 0 for invalid
 *******************************************************************************/
-int validPrintMenu(int choice)
+int valid_print_menu(int choice)
 {
     if (choice < 1 || choice > 2)
     {
@@ -272,5 +270,5 @@ int validPrintMenu(int choice)
 
 void display_usage(void)
 {
-	printf("Usage info goes here\n");
+    printf("Usage info goes here\n");
 }

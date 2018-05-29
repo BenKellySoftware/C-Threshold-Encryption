@@ -14,7 +14,6 @@
 #define STDLIB_H
 #endif
 
-
 #ifndef DEBUG
 #define DEBUG 1
 #endif
@@ -132,12 +131,6 @@ huffman_code_t *new_huffman_codes(void)
 }
 
 
-
-
-
-
-
-
 /*******************************************************************************
  * Gets the frequency of bytes from a file
  *
@@ -210,12 +203,6 @@ int get_node_count(node_t *n)
 
 	return total;
 }
-
-
-
-
-
-
 
 
 /*******************************************************************************
@@ -321,7 +308,6 @@ void sort_nodes(node_list_t *list)
 		for (j = 1; j < list->count - i; ++j)
 			order_two_nodes(&list->items[j-1], &list->items[j]);
 }
-
 
 
 /*******************************************************************************
@@ -434,12 +420,6 @@ void eval_code(huffman_code_t *codes, node_t *node, char prefix[256])
 }
 
 
-
-
-
-
-
-
 /*******************************************************************************
  * Write codes to a file to use later
  *
@@ -451,16 +431,16 @@ void eval_code(huffman_code_t *codes, node_t *node, char prefix[256])
  * - filename : filename to write to
  *
  * Outputs:
- * - None
+ * - 0 if successful, else 1
  *
 *******************************************************************************/
-void write_huffman_code_to_file(huffman_code_t *codes, char *filename)
+int write_huffman_code_to_file(huffman_code_t *codes, char *filename)
 {
 	FILE *file_p = fopen(filename, "wb");
 	if (file_p == NULL)
 	{
 		fprintf(stderr, "Error opening huffman code file\n");
-		exit(1);
+		return 1;
 	}
 
 	int i;
@@ -468,6 +448,7 @@ void write_huffman_code_to_file(huffman_code_t *codes, char *filename)
 		fwrite(&codes[i], sizeof(huffman_code_t), 1, file_p);
 
 	fclose(file_p);
+	return 0;
 }
 
 
@@ -492,7 +473,7 @@ huffman_code_t *load_huffman_code_from_file(char *filename)
 	if (file_p == NULL)
 	{
 		fprintf(stderr, "Error opening huffman code file\n");
-		exit(1);
+		return NULL;
 	}
 
 	int i;
@@ -503,11 +484,6 @@ huffman_code_t *load_huffman_code_from_file(char *filename)
 
 	return codes;
 }
-
-
-
-
-
 
 
 #if DEBUG
@@ -584,16 +560,10 @@ void display_codes(huffman_code_t *codes)
 	int i;
 	for (i = 0; i < 256; ++i)
 	{
-		printf("  0x%02x | %s\n", codes[i].symbol, codes[i].code);
+		printf("0x%02x | %s\n", codes[i].symbol, codes[i].code);
 	}
 }
 #endif
-
-
-
-
-
-
 
 
 /*******************************************************************************

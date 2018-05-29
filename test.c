@@ -1,7 +1,4 @@
 
-/* NOTE : This file is for writing tests to check if functionality works.
-   DO NOT SUBMIT THIS FILE */
-
 #ifndef STDIO_H
 #include <stdio.h>
 #define STDIO_H

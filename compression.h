@@ -216,7 +216,7 @@ int compress_file(huffman_code_t *codes, char *target_file)
     if (target_p == NULL)
     {
         fprintf(stderr, "Error opening target file\n");
-        exit(1);
+        return 1;
     }
 
     /* string and string length */
@@ -266,7 +266,7 @@ int compress_file(huffman_code_t *codes, char *target_file)
                     if (new_p == NULL)
                     {
                         printf("Ran out of memory\n");
-                        exit(1);
+                        return 1;
                     }
                     else
                         compressed_text = new_p;
@@ -293,7 +293,7 @@ int compress_file(huffman_code_t *codes, char *target_file)
         if (new_p == NULL)
         {
             printf("Ran out of memory\n");
-            exit(1);
+            return 1;
         }
         else
             compressed_text = new_p;
@@ -315,7 +315,7 @@ int compress_file(huffman_code_t *codes, char *target_file)
     if (target_p == NULL)
     {
         fprintf(stderr, "Error opening target file\n");
-        exit(1);
+        return 1;
     }
 
     /* write the bytes to target file */
@@ -353,7 +353,7 @@ int decompress_file(huffman_code_t *codes, char *target_file)
     if (target_p == NULL)
     {
         fprintf(stderr, "Error opening target file\n");
-        exit(1);
+        return 1;
     }
 
     /* string and string length */
@@ -409,7 +409,7 @@ int decompress_file(huffman_code_t *codes, char *target_file)
                     if (new_p == NULL)
                     {
                         printf("Ran out of memory\n");
-                        exit(1);
+                        return 1;
                     }
                     else
                     {
@@ -438,7 +438,7 @@ int decompress_file(huffman_code_t *codes, char *target_file)
     if (target_p == NULL)
     {
         fprintf(stderr, "Error opening target file\n");
-        exit(1);
+        return 1;
     }
 
     /* write the bytes to target file */
