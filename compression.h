@@ -1,12 +1,17 @@
 
+#ifndef STDLIB_H
+#include <stdlib.h> /*malloc, free*/
+#define STDLIB_H
+#endif
+
 #ifndef STDIO_H
-#include <stdio.h>
+#include <stdio.h> /*fprintf fopen fclose fseek rewind fwrite getc printf*/
 #define STDIO_H
 #endif
 
 #ifndef HUFFMAN_H
 #include "huffman.h" 
-#define HUFFMAN_H /* load_huffman_codes_from_file */
+#define HUFFMAN_H /*load_huffman_codes_from_file*/
 #endif
 
 typedef struct bit_buffer {

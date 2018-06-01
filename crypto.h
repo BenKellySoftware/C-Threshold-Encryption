@@ -4,6 +4,10 @@
 #define STDLIB_H
 #endif
 
+#ifndef STDIO_H
+#include <stdio.h> /*fprintf printf, rewind, fseek*/
+#define STDIO_H
+#endif
 
 /* Number of individual keys we create */
 #define KEY_COUNT 5

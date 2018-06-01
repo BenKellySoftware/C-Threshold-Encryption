@@ -1,12 +1,12 @@
 
 #ifndef STDIO_H
 #define STDIO_H
-#include <stdio.h>
+#include <stdio.h> /* printf */
 #endif
 
 #ifndef STRING_H
 #define STRING_H
-#include <string.h>
+#include <string.h> /* strcmp */
 #endif
 
 /* ansi codes for terminal colour */
