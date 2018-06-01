@@ -12,8 +12,11 @@ build : huffman.codes
 	@if [ ! -e $(RECIPES_DIR) ]; then \
 		echo "Training set doesn't exist, downloading now"; \
 		wget $(RECIPES_LINK); \
-		unzip recipes.zip; \
+		unzip -o recipes.zip; \
+		rm recipes.zip; \
 	fi
+
+	mkdir -p storage
 
 	$(CC) $(CFLAGS) -DDEBUG=$(DEBUG) -o bepis.out bepis.c
 	@echo "Build complete, run ./bepis.out with either -a or -v"
@@ -24,7 +27,8 @@ huffman.codes : generate_huffman.out
 	@if [ ! -e $(TRAINING_DIR) ]; then \
 		echo "Training set doesn't exist, downloading now"; \
 		wget $(TRAINING_LINK); \
-		unzip training.zip; \
+		unzip -o training.zip; \
+		rm training.zip; \
 	fi
 
 	@echo "Generating huffman code from training set"
@@ -36,4 +40,4 @@ generate_huffman.out : generate_huffman.c
 
 clean :
 	echo "Removing all non-code files"
-	rm -rf storage/ recipes/ training/ training.zip huffman.codes bepis.out generate_huffman.out
+	rm -rf storage/ recipes/ training/ huffman.codes bepis.out generate_huffman.out

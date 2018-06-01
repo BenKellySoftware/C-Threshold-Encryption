@@ -223,7 +223,6 @@ int encrypt_file(unsigned char *key, char *target_file)
     fseek(target_p, 0L, SEEK_END);
     file_size = ftell(target_p);
     rewind(target_p);
-    printf("Target filesize is %lu\n", file_size);
 
     /* read all data from file */
     char *plaintext = (char *)malloc(file_size);
@@ -284,7 +283,6 @@ int decrypt_file(unsigned char *key, char *target_file)
     fseek(target_p, 0L, SEEK_END);
     file_size = ftell(target_p);
     rewind(target_p);
-    printf("  Target filesize is %lu\n", file_size);
 
     /* read all data from file */
     char *cyphertext = (char *)malloc(file_size);

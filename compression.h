@@ -200,8 +200,8 @@ int add_bit_char(bit_buffer_t *b, char c)
  * - Tom
  *
  * Inputs:
- * - codes            : Huffman code file
- * - target_file      : The file to compress
+ * - codes       : Huffman code file
+ * - target_file : The file to compress
  *
  * Output:
  * - 0 if successful, otherwise 1
@@ -337,8 +337,8 @@ int compress_file(huffman_code_t *codes, char *target_file)
  * - Tom
  *
  * Inputs:
- * - target_file      : The file to decompress
- * - destination_file : The file to write to
+ * - codes       : Huffman code file
+ * - target_file : The file to decompress
  *
  * Output:
  * - 0 if successful, otherwise 1
