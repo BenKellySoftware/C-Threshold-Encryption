@@ -9,12 +9,6 @@
 #define HUFFMAN_H
 #endif
 
-#ifndef HELPERS_H
-#include "helpers.h"
-#define HELPERS_H
-#endif
-
-
 typedef struct bit_buffer {
     int seek;
     int size;

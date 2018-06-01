@@ -1,6 +1,10 @@
+training
+storage
+recipes
+*.zip
 *.out
 *.compressed
 *.bin
 *.hex
 *.inspect
-hackerman.codes
+huffman.codes
