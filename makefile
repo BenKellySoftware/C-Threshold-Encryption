@@ -4,7 +4,7 @@ CFLAGS = -Wall -Werror -ansi -lm
 DEBUG = 0
 VERBOSE = 0
 TRAINING_DIR = training
-TRAINING_LINK = https://www.dropbox.com/s/g1ppavcuz90auip/training.zip
+TRAINING_LINK = https://www.dropbox.com/s/43pbo9w3cvj8l0q/training.zip
 RECIPES_DIR = recipes
 RECIPES_LINK = https://www.dropbox.com/s/5wk98372u0qbm5b/recipes.zip
 
