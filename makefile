@@ -4,9 +4,9 @@ CFLAGS = -Wall -Werror -ansi -lm
 DEBUG = 0
 VERBOSE = 0
 TRAINING_DIR = training
-TRAINING_LINK = https://www.dropbox.com/s/l0vocyiy5zm9q9q/training.zip
+TRAINING_LINK = https://www.dropbox.com/s/g1ppavcuz90auip/training.zip
 RECIPES_DIR = recipes
-RECIPES_LINK = https://www.dropbox.com/s/l0vocyiy5zm9q9q/recipes.zip
+RECIPES_LINK = https://www.dropbox.com/s/5wk98372u0qbm5b/recipes.zip
 
 build : huffman.codes
 	@if [ ! -e $(RECIPES_DIR) ]; then \
