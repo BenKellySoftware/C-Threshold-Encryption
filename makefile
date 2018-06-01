@@ -4,6 +4,7 @@ CFLAGS = -Wall -Werror -ansi -lm
 DEBUG = 0
 VERBOSE = 0
 TRAINING_DIR = training
+TRAINING_LINK = https://www.dropbox.com/s/l0vocyiy5zm9q9q/training.zip?dl=1
 
 build : huffman.codes
 	$(CC) $(CFLAGS) -DDEBUG=$(DEBUG) -o bepis.out bepis.c
@@ -14,7 +15,9 @@ rebuild : clean build
 huffman.codes : generate_huffman.out
 	
 	@if [ ! -e $(TRAINING_DIR) ]; then \
-			echo "Training set doesn't exist, downloading now"; \
+		echo "Training set doesn't exist, downloading now"; \
+		wget $(TRAINING_LINK); \
+		unzip training.zip\
 	fi
 
 	@echo "Generating huffman code from training set"
@@ -26,4 +29,4 @@ generate_huffman.out : generate_huffman.c
 
 clean :
 	echo "Removing all non-code files"
-	rm -rf storage/ recipes/ training/ huffman.codes bepis.out generate_huffman.out
+	rm -rf storage/ recipes/ training/ training.zip huffman.codes bepis.out generate_huffman.out
