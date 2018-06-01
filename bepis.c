@@ -28,7 +28,7 @@
 
 
 #define HUFFMAN_CODE_FILE "huffman.codes"
-#define RECPIPE_FOLDER "recipe" 
+#define RECIPE_FOLDER "recipe" 
 #define STORAGE_FOLDER "storage"
 
 
@@ -36,6 +36,7 @@
 int retrieve_recipe(char *filename, point_t a, point_t b, point_t c);
 int add_recipe(char *filename);
 void display_usage(void);
+int copy_file(char *source_filepath, char *destination_filepath);
 
 
 /*******************************************************************************
@@ -80,14 +81,14 @@ int retrieve_recipe(char *filename, point_t a, point_t b, point_t c)
         printf("Reformed key is: %s\n", key);
     #endif
 
-    if (decrypt_file(key, filename))
+    if (decrypt_file(key, destination_filepath))
         return 1;
 
     /* decompressing */
     huffman_code_t *codes = load_huffman_code_from_file(HUFFMAN_CODE_FILE);
     if (codes == NULL)
         return 1;
-    if(decompress_file(codes, filename))
+    if(decompress_file(codes, destination_filepath))
         return 1;
 
     return 0;
@@ -115,7 +116,7 @@ int add_recipe(char *filename)
         return 1;
 
     char source_filepath[80];
-    sprintf(source_filepath, "%s/%s", RECPIPE_FOLDER, filename);
+    sprintf(source_filepath, "%s/%s", RECIPE_FOLDER, filename);
 
     char destination_filepath[80];
     sprintf(destination_filepath, "%s/%s", STORAGE_FOLDER, filename);
@@ -299,9 +300,9 @@ int main(int argc, char* argv[])
                 scanf("%lf, %lf", &point_keys[2].x, &point_keys[2].y);
             }
             if (retrieve_recipe(file_dir,
-                point_keys[0],
-                point_keys[1],
-                point_keys[2]))
+                    point_keys[0],
+                    point_keys[1],
+                    point_keys[2]))
                 {
                     return 1;
                 }
@@ -382,17 +383,52 @@ void display_usage(void)
  * - Ben
  *
  * Inputs:
- * - source_path: original file folder
- * - target_path: destination file folder
+ * - target_filepath      : original file folder
+ * - destination_filepath : destination file folder
  *
  * Outputs:
  * - 0 if successful, else 1
 *******************************************************************************/
-int copy_file(char *source_filepath, char *target_filepath) {
+int copy_file(char *source_filepath, char *destination_filepath)
+{
     
     #if DEBUG
         printf("Copying file\n");
     #endif
+
+    FILE *source_p = fopen(source_filepath, "rb");
+    if (source_p == NULL)
+    {
+        fprintf(stderr, "Error opening target file\n");
+        return 1;
+    }
+
+    FILE *destination_p = fopen(destination_filepath, "wb");
+    if (destination_p == NULL)
+    {
+        fprintf(stderr, "Error opening destination file\n");
+        return 1;
+    }
+
+    /* get the filesize of target */
+    long file_size;
+    fseek(source_p, 0L, SEEK_END);
+    file_size = ftell(source_p);
+    rewind(source_p);
+
+    int i;
+    unsigned char c;
+    for (i = 0; i < file_size; ++i)
+    {
+        /* get char from source */
+        c = getc(source_p);
+
+        /* write char to destination */
+        fwrite(&c, 1, 1, destination_p);
+    }
+
+    fclose(source_p);
+    fclose(destination_p);
 
     return 0;
 }
