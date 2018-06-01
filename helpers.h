@@ -1,6 +1,6 @@
 
 #ifndef STRING_H
-#include <string.h>
+#include <string.h> /*strstr, strcpy, strncpy, sprintf, strlen*/
 #define STRING_H
 #endif
 
@@ -14,7 +14,7 @@
  * Inputs:
  * - str : String to replace text in
  * - replace_str : String we are replacing
- * - with_str    : What we are replacing it with
+ * - with_str : What we are replacing it with
  *
  * Outputs:
  * - None

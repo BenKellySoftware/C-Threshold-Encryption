@@ -1,0 +1,59 @@
+ 
+p1.x*p1.x*poly.a + p1.x*poly.b + 1*poly.c = p1.y
+p2.x*p2.x*poly.a + p2.x*poly.b + 1*poly.c = p2.y
+p3.x*p3.x*poly.a + p3.x*poly.b + 1*poly.c = p3.y
+
+
+
+
+
+
+
+D = (
+	p1.x*p1.x * p2.x * 1 +
+	p2.x*p2.x * p3.x * 1 +
+	p3.x*p3.x * p1.x * 1
+) - (
+	p1.x*p1.x * p3.x * 1 +
+	p2.x*p2.x * p1.x * 1 +
+	p3.x*p3.x * p2.x * 1
+);
+
+
+poly.a = (
+	(
+		p1.x * p3.y * 1 +
+		p2.x * p1.y * 1 +
+		p3.x * p2.y * 1
+	) - (
+		p1.x * p2.y * 1 +
+		p2.x * p3.y * 1 +
+		p3.x * p1.y * 1 
+	)
+)/D;
+
+
+poly.b = (
+	(
+		p1.x*p1.x * p2.y * 1 +
+		p2.x*p2.x * p3.y * 1 +
+		p3.x*p3.x * p1.y * 1
+	) - (
+		p1.x*p1.x * p3.y * 1 +
+		p2.x*p2.x * p1.y * 1 +
+		p3.x*p3.x * p2.y * 1
+	)
+)/D;
+
+
+poly.c = (
+	(
+		p1.x*p1.x * p2.x * p3.y +
+		p2.x*p2.x * p3.x * p1.y
+		p3.x*p3.x * p1.x * p2.y +
+	) - (
+		p1.x*p1.x * p3.x * p2.y +
+		p2.x*p2.x * p1.x * p3.y +
+		p3.x*p3.x * p2.x * p1.y
+	)
+)/D;
