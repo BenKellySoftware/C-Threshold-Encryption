@@ -27,13 +27,12 @@
 #endif
 
 
-#define HUFFMAN_CODE_FILE "hackerman.codes" /* load_huffman_code_from_file */
+#define HUFFMAN_CODE_FILE "huffman.codes" /* load_huffman_code_from_file */
 
 
 /* prototypes */
 int retrieve_recipe(char *filename, point_t a, point_t b, point_t c);
 int add_recipe(char *filename);
-int valid_print_menu(int choice);
 void display_usage(void);
 
 
@@ -270,6 +269,7 @@ int main(int argc, char* argv[])
         {
             colour_printf("red", "There is no mode for the arguement you have " 
                           "entered.\n");
+            display_usage();
             return 1;
         }
     }
