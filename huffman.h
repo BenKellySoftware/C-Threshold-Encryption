@@ -1,11 +1,11 @@
 
 #ifndef STDIO_H
-#include <stdio.h>
+#include <stdio.h> /*printf, rewind, fseek*/
 #define STDIO_H
 #endif
 
 #ifndef STRING_H
-#include <string.h>
+#include <string.h> /*strcpy, strcat, strcmp*/
 #define STRING_H
 #endif
 
@@ -13,11 +13,6 @@
 #include <stdlib.h> /*malloc, free*/
 #define STDLIB_H
 #endif
-
-#ifndef DEBUG
-#define DEBUG 1
-#endif
-
 
 typedef struct huffman_code {
     unsigned char symbol;
@@ -156,7 +151,7 @@ void get_byte_counts(byte_counts_t *counts, FILE *file_p)
     counts->total_byte_count += filesize;
 
     /* show the filesize if debug mode is on */
-    #if DEBUG & LOG_LEVEL >= 1
+    #if DEBUG & VERBOSE
         printf("  Total filesize is %d\n", counts->total_byte_count);
         printf("\n");
     #endif

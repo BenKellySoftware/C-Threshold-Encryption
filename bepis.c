@@ -11,13 +11,13 @@
 
 #ifndef CRYPTO_H
 #include "crypto.h" /* find_polynomial, retrieve_key_from_polynomial,
-					   decrypt_file, create_polynomial_from_key, generate_key, 
-					   encrypt_file, pick_point */
+                       decrypt_file, create_polynomial_from_key, generate_key, 
+                       encrypt_file, pick_point */
 #define CRYPTO_H
 #endif
 
 #ifndef COMPRESSION_H
-#include "compression.h" /* decompress_file, compress_file, */
+#include "compression.h" /* decompress_file, compress_file */
 #define COMPRESSION_H
 #endif
 
@@ -27,7 +27,9 @@
 #endif
 
 
-#define HUFFMAN_CODE_FILE "huffman.codes" /* load_huffman_code_from_file */
+#define HUFFMAN_CODE_FILE "huffman.codes"
+#define RECPIPE_FOLDER "recipe" 
+#define STORAGE_FOLDER "storage"
 
 
 /* prototypes */
@@ -55,9 +57,29 @@ void display_usage(void);
 *******************************************************************************/
 int retrieve_recipe(char *filename, point_t a, point_t b, point_t c)
 {
+    /*Copy file back into decompressed*/
+    char source_filepath[80];
+    sprintf(source_filepath, "%s/%s", STORAGE_FOLDER, filename);
+
+    char destination_filepath[80];
+    sprintf(destination_filepath, "%s/%s", RECIPE_FOLDER, filename);
+
+    copy_file(source_filepath, destination_filepath);
+
     /* decrypting */
     polynomial_t poly = find_polynomial(a, b, c);
+    
+    #if DEBUG
+        printf("Poly Co-efficients are a: %d b: %d, c: %d \n", 
+            poly.a, poly.b, poly.c);
+    #endif
+
     unsigned char *key = retrieve_key_from_polynomial(poly);
+
+    #if DEBUG
+        printf("Reformed key is: %s\n", key);
+    #endif
+
     if (decrypt_file(key, filename))
         return 1;
 
@@ -92,13 +114,32 @@ int add_recipe(char *filename)
     if (codes == NULL)
         return 1;
 
-    if (compress_file(codes, filename))
+    char source_filepath[80];
+    sprintf(source_filepath, "%s/%s", RECPIPE_FOLDER, filename);
+
+    char destination_filepath[80];
+    sprintf(destination_filepath, "%s/%s", STORAGE_FOLDER, filename);
+
+    copy_file(source_filepath, destination_filepath);
+
+    if (compress_file(codes, destination_filepath))
         return 1;
 
     /* encrypting */
     unsigned char *key = generate_key();
+
+    #if DEBUG
+        printf("Generated key is: %s\n", key);
+    #endif
+
     polynomial_t poly = create_polynomial_from_key(key);
-    if (encrypt_file(key, filename))
+
+    #if DEBUG
+        printf("Poly Co-efficients are a: %d b: %d, c: %d \n", 
+            poly.a, poly.b, poly.c);
+    #endif
+
+    if (encrypt_file(key, destination_filepath))
         return 1;
 
     /* display points */
@@ -332,4 +373,26 @@ void display_usage(void)
         "                                   and 3 keys]\n"
         "\n"
         "  -h   [help menu]\n");
+}
+
+/*******************************************************************************
+ * Copies a file between directories
+ *  
+ * Author: 
+ * - Ben
+ *
+ * Inputs:
+ * - source_path: original file folder
+ * - target_path: destination file folder
+ *
+ * Outputs:
+ * - 0 if successful, else 1
+*******************************************************************************/
+int copy_file(char *source_filepath, char *target_filepath) {
+    
+    #if DEBUG
+        printf("Copying file\n");
+    #endif
+
+    return 0;
 }
