@@ -28,7 +28,7 @@ huffman.codes : generate_huffman.out
 	fi
 
 	@echo "Generating huffman code from training set"
-	@./generate_huffman.out training 5
+	@./generate_huffman.out $(TRAINING_DIR)/*
 
 generate_huffman.out : generate_huffman.c
 	@echo "Compiling huffman generator"
