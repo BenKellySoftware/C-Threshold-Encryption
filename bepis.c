@@ -33,10 +33,10 @@
 
 
 /* prototypes */
-int retrieve_recipe(char *filename, point_t a, point_t b, point_t c);
-int add_recipe(char *filename);
+int retrieve_recipe(const char *filename, point_t a, point_t b, point_t c);
+int add_recipe(const char *filename);
 void display_usage(void);
-int copy_file(char *source_filepath, char *destination_filepath);
+int copy_file(const char *source_filepath, const char *destination_filepath);
 
 
 /*******************************************************************************
@@ -56,7 +56,7 @@ int copy_file(char *source_filepath, char *destination_filepath);
  * - 0 if successful, otherwise 1
  *
 *******************************************************************************/
-int retrieve_recipe(char *filename, point_t a, point_t b, point_t c)
+int retrieve_recipe(const char *filename, point_t a, point_t b, point_t c)
 {
     /*Copy file back into decompressed*/
     char source_filepath[80];
@@ -108,7 +108,7 @@ int retrieve_recipe(char *filename, point_t a, point_t b, point_t c)
  * - 0 if successful, otherwise 1
  *
 *******************************************************************************/
-int add_recipe(char *filename)
+int add_recipe(const char *filename)
 {
     /* compressing */
     huffman_code_t *codes = load_huffman_code_from_file(HUFFMAN_CODE_FILE);
@@ -175,7 +175,7 @@ int add_recipe(char *filename)
  * Mode -v is to view the recipe.
  *
 *******************************************************************************/
-int main(int argc, char* argv[])
+int main(int argc, const char* argv[])
 {
 
     /*Allows random numbers for the crypto points and keys*/
@@ -198,8 +198,8 @@ int main(int argc, char* argv[])
             scanf("%s", choice);
             if (strcmp(choice, "1") == 0)
             {
-                colour_printf("green", "Please enter the recipe file directory>"
-                    "\n");
+                colour_printf("green", "Please enter the recipe file name in "
+                    "recipes folder (excluding path)>\n");
 
                 scanf("%s", file_dir);
 
@@ -208,8 +208,8 @@ int main(int argc, char* argv[])
             }
             else if(strcmp(choice, "2") == 0)
             {
-                colour_printf("green", "Please enter the recipe file directory>"
-                    "\n");
+                colour_printf("green", "Please enter the recipe file name in "
+                    "storage folder (excluding path)>\n");
 
                 scanf("%s", file_dir);
                 
@@ -262,8 +262,8 @@ int main(int argc, char* argv[])
             {
                 /* if they havent entered files, ask them to enter the target */
                 /* and dest file */
-                colour_printf("green", "Please enter the recipe file directory>"
-                              "\n");
+                colour_printf("green", "Please enter the recipe file name in "
+                    "recipes folder (excluding path)>\n");
                 scanf("%s", file_dir);
             }
 
@@ -286,8 +286,8 @@ int main(int argc, char* argv[])
             {
                 /* if they havent entered files, ask them to enter the target*/ 
                 /* file and points */
-                colour_printf("green", "Please enter the recipe file directory>"
-                              "\n");
+                colour_printf("green", "Please enter the recipe file name in "
+                    "storage folder (excluding path)>\n");
                 scanf("%s", file_dir);
                 colour_printf("green", "KEY 1: Please enter two key numbers, "
                               "separated by a comma>");
@@ -389,7 +389,7 @@ void display_usage(void)
  * Outputs:
  * - 0 if successful, else 1
 *******************************************************************************/
-int copy_file(char *source_filepath, char *destination_filepath)
+int copy_file(const char *source_filepath, const char *destination_filepath)
 {
     
     #if DEBUG

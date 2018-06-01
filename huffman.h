@@ -180,7 +180,7 @@ void get_byte_counts(byte_counts_t *counts, FILE *file_p)
  * - total count
  *
 *******************************************************************************/
-int get_node_count(node_t *n)
+int get_node_count(const node_t *n)
 {
     int total = 0;
 
@@ -429,7 +429,7 @@ void eval_code(huffman_code_t *codes, node_t *node, char prefix[256])
  * - 0 if successful, else 1
  *
 *******************************************************************************/
-int write_huffman_code_to_file(huffman_code_t *codes, char *filename)
+int write_huffman_code_to_file(const huffman_code_t *codes, const char *filename)
 {
     FILE *file_p = fopen(filename, "wb");
     if (file_p == NULL)
@@ -460,7 +460,7 @@ int write_huffman_code_to_file(huffman_code_t *codes, char *filename)
  * - A huffman code list
  *
 *******************************************************************************/
-huffman_code_t *load_huffman_code_from_file(char *filename)
+huffman_code_t *load_huffman_code_from_file(const char *filename)
 {
     huffman_code_t *codes = (huffman_code_t*)malloc(sizeof(huffman_code_t)*256);
 
@@ -550,7 +550,7 @@ void display_nodes(node_list_t list)
  * - None
  *
 *******************************************************************************/
-void display_codes(huffman_code_t *codes)
+void display_codes(const huffman_code_t *codes)
 {
     int i;
     for (i = 0; i < 256; ++i)
@@ -606,7 +606,7 @@ int char_to_code(huffman_code_t *codes, unsigned int c, char **s)
  * - Decompressed string
  *
 *******************************************************************************/
-int code_to_char(huffman_code_t *codes, char *c, char *s)
+int code_to_char(const huffman_code_t *codes, char *c, char *s)
 {
     int i;
     for (i = 0; i < 256; ++i)

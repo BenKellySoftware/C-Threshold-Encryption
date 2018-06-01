@@ -5,8 +5,8 @@
 #endif
 
 #ifndef HUFFMAN_H
-#include "huffman.h"
-#define HUFFMAN_H
+#include "huffman.h" 
+#define HUFFMAN_H /* load_huffman_codes_from_file */
 #endif
 
 typedef struct bit_buffer {
@@ -201,7 +201,7 @@ int add_bit_char(bit_buffer_t *b, char c)
  * - 0 if successful, otherwise 1
  *
  ******************************************************************************/
-int compress_file(huffman_code_t *codes, char *target_file)
+int compress_file(huffman_code_t *codes, const char *target_file)
 {
     FILE *target_p;
 
@@ -338,7 +338,7 @@ int compress_file(huffman_code_t *codes, char *target_file)
  * - 0 if successful, otherwise 1
  *
  ******************************************************************************/
-int decompress_file(huffman_code_t *codes, char *target_file)
+int decompress_file(const huffman_code_t *codes, const char *target_file)
 {
     FILE *target_p;
 

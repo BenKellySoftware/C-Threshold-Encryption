@@ -21,7 +21,7 @@
 #endif
 
 /*Needs a folder name and number of files as parameters*/
-int main(int argc, char *argv[])
+int main(int argc, const char *argv[])
 {
     /* check if any files were entered */
     if (argc <= 1)

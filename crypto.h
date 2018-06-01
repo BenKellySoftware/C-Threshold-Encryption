@@ -131,7 +131,7 @@ unsigned char * generate_key(void)
  * - pointer to cyphertext
  *
 *******************************************************************************/
-char * encrypt_data(unsigned char *key, char *plaintext, int data_len)
+char * encrypt_data(const unsigned char *key, const char *plaintext, int data_len)
 {
     /*allocate space for the ENCRYPTED data*/
     char *cyphertext = (char *)malloc(data_len);
@@ -169,7 +169,7 @@ char * encrypt_data(unsigned char *key, char *plaintext, int data_len)
  * - pointer to plaintext
  *
 *******************************************************************************/
-char * decrypt_data(unsigned char *key, char *cyphertext, int data_len)
+char * decrypt_data(const unsigned char *key, const char *cyphertext, int data_len)
 {
     /*allocate space for the ENCRYPTED data*/
     char *plaintext = (char *)malloc(data_len);
@@ -206,7 +206,7 @@ char * decrypt_data(unsigned char *key, char *cyphertext, int data_len)
  * - 0 if success, else 1
  *
 *******************************************************************************/
-int encrypt_file(unsigned char *key, char *target_file)
+int encrypt_file(const unsigned char *key, const char *target_file)
 {
     FILE *target_p;
 
@@ -266,7 +266,7 @@ int encrypt_file(unsigned char *key, char *target_file)
  * - 0 if success, else 1
  *
 *******************************************************************************/
-int decrypt_file(unsigned char *key, char *target_file)
+int decrypt_file(const unsigned char *key, const char *target_file)
 {
     FILE *target_p;
 
@@ -325,7 +325,7 @@ int decrypt_file(unsigned char *key, char *target_file)
  * - A polynomial object
  *
 *******************************************************************************/
-polynomial_t create_polynomial_from_key(unsigned char *key)
+polynomial_t create_polynomial_from_key(const unsigned char *key)
 {
     polynomial_t poly;
     poly.a = (key[0] << 8) + key[1];
