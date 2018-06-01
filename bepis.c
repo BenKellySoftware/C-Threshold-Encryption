@@ -28,7 +28,7 @@
 
 
 #define HUFFMAN_CODE_FILE "huffman.codes"
-#define RECIPE_FOLDER "recipe" 
+#define RECIPE_FOLDER "recipes" 
 #define STORAGE_FOLDER "storage"
 
 
