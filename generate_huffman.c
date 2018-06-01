@@ -24,14 +24,11 @@
 int main(int argc, char *argv[])
 {
     /* check if any files were entered */
-    if (argc <= 2)
+    if (argc <= 1)
     {
-        fprintf(stderr, "Must specify a folder and number of images\n");
+        fprintf(stderr, "Must specify at least 1 image\n");
         return 1;
     }
-    char *folder_name = argv[1];
-    int image_count = atoi(argv[2]);
-
     /* file pointer to use */
     FILE *file_p;
 
@@ -40,16 +37,13 @@ int main(int argc, char *argv[])
 
     /* count the occurances of each byte in each file */
     int i;
-    for (i = 0; i < image_count; ++i)
+    for (i = 1; i < argc; ++i)
     {
-        /*Making filepath*/
-        char filepath[80];
-        sprintf(filepath, "%s/%d.bmp", folder_name, i);
         #if DEBUG
-            printf("Reading file: %s\n", filepath);
+            printf("Reading file: %s\n", argv[i]);
         #endif
 
-        file_p = fopen(filepath, "rb");
+        file_p = fopen(argv[i], "rb");
         if (file_p == NULL)
         {
             fprintf(stderr, "Failed opening file, ignoring and moving to next\n");
