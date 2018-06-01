@@ -28,7 +28,7 @@
 /* prototypes */
 int retrieve_recipe(char *filename, point_t a, point_t b, point_t c);
 int add_recipe(char *filename);
-int valid_choice(int choice);
+int validPrintMenu(int choice);
 
 
 /*******************************************************************************
@@ -50,18 +50,51 @@ int valid_choice(int choice);
 *******************************************************************************/
 int retrieve_recipe(char *filename, point_t a, point_t b, point_t c)
 {
-    if(DEBUG) {
-        printf("loading file\n");
+    printf("Please enter at lease 3 key codes to decrypt\n")
+    printf("code 1>>");
+    scanf("%s\n", &a1);
+    printf("code 2>>");
+    scanf("%s\n", &b2);
+    printf("code 3>>");
+    scanf("%s\n", &c3);
+    printf("Thank you!");
+
+    if ( a == a1 && b =b2 && c =c3)
+    /*THis part is not finished, im just a little confused about what i do 
+    with these numbers???? and also can they put in more than 3 codes? */
+    {
+        FILE * fPointer;
+        fPointer = fopen("smile.png", "wb"); 
+
+        FILE *file_p;
+        file_p = fopen("NewFile", "rb");
+        fseek(file_p, 0L, SEEK_END);/*Go to the end of this file*/
+        int size = ftell(file_p);/* get the position we are in the file as a number of bytes */
+        rewind(file_p);/* go back to the start of the file so we can read it */
+        printf("%d\n", size);/*Prints size for da refererence*/
+
+        /*For loop for the size of file*/   
+        int i;
+        for ( i = 0; i < size; i++)
+        {
+            char* b = (char*)malloc(sizeof(char)*size);
+            fread(b, sizeof(char), size, file_p);
+            fwrite(b, sizeof(char), size, fPointer);
+        }
+
+        fclose(fPointer);
+        fclose(file_p);
+
+        return 0; 
     }
-    loadfile()
-    if(DEBUG) {
-        printf("getting line\n");
-    }
-    getline(a,b,c)
-    if(DEBUG) {
-        printf("coefficients of line are %d %d %d\n", poly.a, poly.b, poly.c);
-    }
-    getkey(point)
+
+
+	/* run the decryption here */
+
+
+	/* run the decompression here */
+
+
     return 0;
 }
 
@@ -81,7 +114,41 @@ int retrieve_recipe(char *filename, point_t a, point_t b, point_t c)
 *******************************************************************************/
 int add_recipe(char *filename)
 {
+    /*Raw recipe file to be read*/
+    FILE *raw_p = fopen( filename, "rb");
+    /*New file to be encrypted an stored*/
+    FILE *compressed_p = compress(raw_p);
+
+    FILE *encrypted_p = encrypt(compressed_p);
+
+    
+    /*Find the size of file */
+    fseek(file_p, 0L, SEEK_END);/*Go to the end of this file*/
+    int size = ftell(file_p);/* get the position we are in the file as a number of bytes */
+    rewind(file_p);/* go back to the start of the file so we can read it */
+    printf("%d\n", size);/*Prints size for da refererence*/
+
+    int i;
+    char* b = (char*)malloc(sizeof(char)*size);
+
+    for ( i = 0; i < size; i++)
+    {
+        fread(b, sizeof(char), size, raw_p);
+        fwrite(b, sizeof(char), size, encrypted_p);
+    }
+
+    fclose(fPointer);
+    fclose(encrypted_p);
+
+    return 0; 
+	/* run the compression here */
+
+
+	/* run the encryption here */
+
+
     return 0;
+
 }
 
 
@@ -105,6 +172,51 @@ int add_recipe(char *filename)
 *******************************************************************************/
 int main(int argc, char* argv[])
 {
+<<<<<<< HEAD
+    int choice;       
+
+    colour_printf("blue", "Welcome to the Bepis Gola Database\n");
+    if (argc <= 1) /* no arguement entered- therefore use scanf */
+    {
+        do
+        {       
+            printf("\n"
+            "1. add a recipe\n"
+            "2. view the recipe\n"
+            "Please enter a number that correlates with your choice above>\n");
+            scanf("%d", &choice);
+        } 
+        while(validPrintMenu(choice));
+    }
+    else /* arguements already entered */
+    {
+        if (strcmp(argv[1], "-a") == 0)
+        {
+            choice = 1;
+        }
+        else if (strcmp(argv[1], "-v") == 0)
+        {
+            choice = 2;
+        }
+        else 
+        {
+            printf("There is no mode for the arguement you have entered.\n");
+            return 1;
+        }
+    }
+
+    if (choice == 1)
+    {
+        printf("You have chosen to add a recipe.\n");
+        add_recipe(*filename);
+    }
+    if (choice == 2)
+    {
+        printf("You have chosen to view the recipe.\n");
+        retrieve_recipe(*filename, a, b, c);
+    }
+    return 0;
+=======
 	int choice;		  
 
 	colour_printf("blue", "Welcome to the Bepis Gola Database\n");
@@ -118,16 +230,27 @@ int main(int argc, char* argv[])
 			"Please enter a number that correlates with your choice above>\n");
 			scanf("%d", &choice);
 		} 
-		while(valid_choice(choice));
+		while(!validPrintMenu(choice));
 	}
 	else /* arguements already entered */
 	{
+		/* check if argv[1] is "-h" */
+		/* if it is, display the help */
+
 		if (strcmp(argv[1], "-a") == 0)
 		{
+			/* check if argc == 4, ie they entered ./main.out -a target_file */
+
+			/* if they havent entered files, ask them to enter the target and dest file */
+
 			choice = 1;
 		}
 		else if (strcmp(argv[1], "-v") == 0)
 		{
+			/* check if argc == 4, ie they entered ./main.out -v target_file key1 key2 key3 */
+
+			/* if they havent entered files, ask them to enter the target file and points */
+
 			choice = 2;
 		}
 		else 
@@ -137,19 +260,31 @@ int main(int argc, char* argv[])
 		}
 	}
 
+	
+
+
 	if (choice == 1)
 	{
+		/* remove this once target_file and or points are gotten from user input or arguments */
+		char *filename = "Images/recipe.bmp";
+
 		printf("You have chosen to add a recipe.\n");
-		add_recipe(*filename);
+		add_recipe(filename);
 	}
 	if (choice == 2)
 	{
+		/* remove this once target_file and or points are gotten from user input or arguments */
+		char *filename = "Images/recipe.compressed";
+		point_t a;
+		point_t b;
+		point_t c;
+
 		printf("You have chosen to view the recipe.\n");
-		retrieve_recipe(*filename, a, b, c);
+		retrieve_recipe(filename, a, b, c);
 	}
 	return 0;
+>>>>>>> cbb190a6b059634803f10e94d1d85db54242587c
 }
-
 
 /*******************************************************************************
  * This function checks for valid choice choice from user. 
@@ -164,7 +299,7 @@ int main(int argc, char* argv[])
  * - 1 for valid
  * - 0 for invalid
 *******************************************************************************/
-int valid_choice(int choice)
+int validPrintMenu(int choice)
 {
     if (choice < 1 || choice > 2)
     {

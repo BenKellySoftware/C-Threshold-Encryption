@@ -9,6 +9,13 @@
 #define HUFFMAN_H
 #endif
 
+#ifndef HELPERS_H
+#include "helpers.h"
+#define HELPERS_H
+#endif
+
+#define COMPRESSED_EXTENSION ".compressed"
+
 
 typedef struct bit_buffer {
     int seek;
@@ -189,21 +196,26 @@ int add_bit_char(bit_buffer_t *b, char c)
 
 
 /*******************************************************************************
- * Compresses a file such that it takes up less space on disc
+ * Compresses a file such that it takes up less space on disc. Adds
+ * COMPRESSED_EXTENSION onto the filename
  *
  * Author: 
  * - Tom
  *
  * Inputs:
+ * - codes            : Huffman code file
  * - target_file      : The file to compress
- * - destination_file : The file to write to
  *
  * Output:
  * - 0 if successful, otherwise 1
  *
  ******************************************************************************/
-int compress_file(char *target_file, char *destination_file)
+int compress_file(huffman_code_t *codes, char *target_file)
 {
+    char *destination_file = (char*)malloc(strlen(target_file)+strlen(COMPRESSED_EXTENSION));
+    strcpy(destination_file, target_file);
+    strcat(destination_file, COMPRESSED_EXTENSION);
+
     /* open the file */
     FILE *target_p = fopen(target_file, "rb");
     if (target_p == NULL)
@@ -238,14 +250,13 @@ int compress_file(char *target_file, char *destination_file)
     /* read the file char by char*/
     unsigned char c;
     int count;
-    int char_count = 0;
-    while (char_count < file_size)
+    int char_count;
+    for (char_count = 0; char_count < file_size; ++char_count)
     {
         c = getc(target_p);
-        ++char_count;
 
         /* for each character, look up what the compressed bit string is */
-        char_to_code(c, &bit_string);
+        char_to_code(codes, c, &bit_string);
 
         /* have a count. for each bit we read, increment it by one */
         for (count = 0; count < strlen(bit_string); ++count)
@@ -281,7 +292,7 @@ int compress_file(char *target_file, char *destination_file)
 
 
 /*******************************************************************************
- * Decompresses a file
+ * Decompresses a file. Strips COMPRESSED_EXTENSION from the filename
  *
  * Author: 
  * - Tom
@@ -294,8 +305,12 @@ int compress_file(char *target_file, char *destination_file)
  * - 0 if successful, otherwise 1
  *
  ******************************************************************************/
-int decompress_file(char *target_file, char *destination_file)
+int decompress_file(huffman_code_t *codes, char *target_file)
 {
+    char *destination_file = (char*)malloc(strlen(target_file));
+    strcpy(destination_file, target_file);
+    replace_in_string(&destination_file, COMPRESSED_EXTENSION, "");
+
     /* open the files */
     FILE *target_p = fopen(target_file, "rb");
     if (target_p == NULL)
@@ -313,7 +328,7 @@ int decompress_file(char *target_file, char *destination_file)
     int bytes_written = 0;
 
     /* string of bits */
-    char bit_string[LONGEST_CODE+1] = "";
+    char bit_string[256] = "";
     char write_byte;
 
     /* bit buffer to use */
@@ -330,11 +345,10 @@ int decompress_file(char *target_file, char *destination_file)
     /* read the file char by char */
     unsigned char c;
     int count;
-    int char_count = 0;
-    while (char_count < file_size)
+    int char_count;
+    for (char_count = 0; char_count < file_size; ++char_count)
     {
         c = getc(target_p);
-        ++char_count;
 
         /* for each character, get the bits */
         buffer = char_to_buffer(c);
@@ -349,7 +363,7 @@ int decompress_file(char *target_file, char *destination_file)
             );
 
             /* if we found a code */
-            if (code_to_char(&write_byte, bit_string) == 0)
+            if (code_to_char(codes, &write_byte, bit_string) == 0)
             {
                 /* write that decoded char to file */
                 fwrite(&write_byte, 1, 1, destination_p);
