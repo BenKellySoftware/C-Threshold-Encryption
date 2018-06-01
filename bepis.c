@@ -63,7 +63,7 @@ int retrieve_recipe(char *filename, point_t a, point_t b, point_t c)
     sprintf(source_filepath, "%s/%s", STORAGE_FOLDER, filename);
 
     char destination_filepath[80];
-    sprintf(destination_filepath, "%s/%s", RECIPE_FOLDER, filename);
+    sprintf(destination_filepath, "%s/retrieved_%s", RECIPE_FOLDER, filename);
 
     copy_file(source_filepath, destination_filepath);
 
